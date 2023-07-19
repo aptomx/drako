@@ -1,0 +1,105 @@
+<mjml>
+  <mj-head>
+    <mj-title></mj-title>
+    <mj-font name="Roboto" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="Roboto, sans-serif" font-weight="400" font-style="normal" />
+    </mj-attributes>
+    <mj-style>
+      @media all and (max-width: 480px) {
+        .mobile-center-logo {
+          text-align:
+            -webkit-center;
+        }
+
+        .mobile-center-links div {
+          text-align: center !important;
+        }
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-wrapper padding="0">
+
+      <mj-raw>@if('HEADER')</mj-raw>
+      <mj-section></mj-section>
+      <mj-section background-color="#acacac">
+        <mj-column width="100%" padding-top="5px" padding-bottom="5px">
+          <mj-image width="100px" align="center" src="{{#pathImage 'logo.png'}}{{/pathImage}}"></mj-image>
+        </mj-column>
+      </mj-section>
+      <mj-raw>@if('HEADER')</mj-raw>
+
+      <mj-raw>@if('BODY')</mj-raw>
+      <mj-section background-color="#fff" padding="35px">
+        <mj-column width="100%">
+          <mj-text font-size="32px" font-weight="600" align="center" color="#0C1D66" line-height="35px">
+            Aviso
+          </mj-text>
+          <mj-text color="#000" font-size="32px" font-weight="600" align="center" line-height="35px">
+            Recuperar contraseña
+          </mj-text>
+        </mj-column>
+        <mj-column width="100%">
+          <mj-text padding="25px 35px" font-size="16px" font-weight="400" align="center" color="#000" line-height="18px">
+            Has solicitado un cambio de contraseña. Haga clic en el botón de
+            abajo para continuar con la recuperación.
+          </mj-text>
+        </mj-column>
+        <mj-column width="100%">
+          <mj-button href="{{url}}" background-color="#0c1d66" color="#ffffff" border-radius="100px" font-weight="600" font-size="16px" line-height="21px">
+            Cambiar contraseña
+          </mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-raw>@if('BODY')</mj-raw>
+      <mj-raw>@if('FOOTER')</mj-raw>
+      <mj-section background-color="#acacac" padding="15px 35px">
+        <mj-column width="50%">
+          <mj-text padding-top="20px" css-class="mobile-center-links">
+            <a href="http://google.com" target="_blank" style="
+                color: #ffffff;
+                text-decoration: none;
+                padding-right: 5px;
+                border-right: 2px solid #fff;
+              ">
+              Link
+            </a>
+            <a href="http://google.com" target="_blank" style="
+                color: #ffffff;
+                text-decoration: none;
+                padding-right: 5px;
+                border-right: 2px solid #fff;
+                padding-left: 5px;
+              ">
+              Link
+            </a>
+            <a href="http://google.com" target="_blank" style="
+                color: #ffffff;
+                text-decoration: none;
+                padding-right: 5px;
+                padding-left: 5px;
+              ">
+              Link
+            </a>
+          </mj-text>
+        </mj-column>
+        <mj-column width="50%">
+          <mj-image css-class="mobile-center-logo" width="180px" align="right" src="${data.appUrl}/logo.png"></mj-image>
+        </mj-column>
+        <mj-column width="100%" padding-top="10px">
+          <mj-text font-size="12px" font-weight="400" align="center" color="#fff" line-height="16px">
+            Example. Todos los derechos reservados
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column>
+          <mj-spacer height="40px"></mj-spacer>
+        </mj-column>
+      </mj-section>
+      <mj-raw>@if('FOOTER')</mj-raw>
+
+    </mj-wrapper>
+  </mj-body>
+</mjml>
