@@ -10,6 +10,7 @@ import { ConfigType } from '@nestjs/config';
 import appConfig from 'config/registers/app.config';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
 import { IMethodsBase } from '../interfaces/methods-base';
+import { optimizedFormatAvailableList } from '../enums/optimized-format-available';
 
 @Injectable()
 export class LocalFilesService implements IMethodsBase {
@@ -43,14 +44,18 @@ export class LocalFilesService implements IMethodsBase {
     }
     const fullPath = `${savePath}/${nameFile}.${extension}`;
 
-    await sharp(file.buffer)
-      .toFormat(extension, {
-        mozjpeg: true,
-        quality: quality,
-      })
-      .sharpen()
-      .withMetadata()
-      .toFile(fullPath);
+    if (optimizedFormatAvailableList.includes(extension)) {
+      await sharp(file.buffer)
+        .toFormat(extension, {
+          mozjpeg: true,
+          quality: quality,
+        })
+        .sharpen()
+        .withMetadata()
+        .toFile(fullPath);
+    } else {
+      fs.writeFileSync(fullPath, file.buffer);
+    }
 
     const key = `${pathFolder}/${nameFile}.${extension}`;
     const url = `${this.apConfig.appUrl}/${this.pathFolder}/${key}`.replace(

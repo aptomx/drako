@@ -16,6 +16,7 @@ import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-succe
 import * as mime from 'mime-types';
 import * as sharp from 'sharp';
 import { IMethodsBase } from '../interfaces/methods-base';
+import { optimizedFormatAvailableList } from '../enums/optimized-format-available';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
@@ -35,22 +36,25 @@ export class S3FilesService implements IMethodsBase {
   ): Promise<IFileResponse> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extension: any = diskIntance.getExtenstion(file); //use "any" to simplify rule sharp.FormatEnum
+    let bufferInfo = file.buffer;
 
-    const newBufferFile = await sharp(file.buffer)
-      .toFormat(extension, {
-        mozjpeg: true,
-        quality: quality,
-      })
-      .sharpen()
-      .withMetadata()
-      .toBuffer();
+    if (optimizedFormatAvailableList.includes(extension)) {
+      bufferInfo = await sharp(file.buffer)
+        .toFormat(extension, {
+          mozjpeg: true,
+          quality: quality,
+        })
+        .sharpen()
+        .withMetadata()
+        .toBuffer();
+    }
 
     let newFileName = name;
     if (!name) {
       newFileName = getRandomAlphanumeric(15, true);
     }
     const pathS3 = `upload/${pathFolder}/${newFileName}.${extension}`;
-    return await this.upload(newBufferFile, pathS3, isPrivate);
+    return await this.upload(bufferInfo, pathS3, isPrivate);
   }
 
   async deleteDisk(url: string): Promise<IDisplayMessageSuccess> {
