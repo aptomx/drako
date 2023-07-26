@@ -46,7 +46,7 @@ npm install
 - Ejecutar desde consola:
 
 ```bash
-- Pendiente...
+- npm run seed
 ```
 
 ## Ejecutar aplicación
