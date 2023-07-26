@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Inject, Injectable } from '@nestjs/common';
-import { IFileResponse } from '../interfaces/file-response.interface';
-import { DiskService } from '../disk.service';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as sharp from 'sharp';
@@ -9,8 +7,10 @@ import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
 import { ConfigType } from '@nestjs/config';
 import appConfig from 'config/registers/app.config';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { IMethodsBase } from '../interfaces/methods-base';
-import { optimizedFormatAvailableList } from '../enums/optimized-format-available';
+import { IMethodsBase } from '../../interfaces/methods-base';
+import { DiskService } from '../../disk.service';
+import { IFileResponse } from '../../interfaces/file-response.interface';
+import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
 
 @Injectable()
 export class LocalFilesService implements IMethodsBase {

@@ -4,9 +4,9 @@ import { IFileResponse } from './interfaces/file-response.interface';
 import filesystemsConfig from 'config/registers/filesystems.config';
 import { ConfigType } from '@nestjs/config';
 import { DiskConfig } from 'config/enums/disk.enum';
-import { LocalFilesService } from './local-files/local-files.service';
-import { S3FilesService } from './s3-files/s3-files.service';
 import { DiskModel } from './models/disk.model';
+import { LocalFilesService } from './storages/local-files/local-files.service';
+import { S3FilesService } from './storages/s3-files/s3-files.service';
 
 @Injectable()
 export class DiskService extends DiskModel {

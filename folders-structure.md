@@ -1,0 +1,60 @@
+# Folders structure
+
+- .husky
+- config
+  - app
+  - constants
+  - database
+    - connectors
+  - enums
+  - filesystem
+  - magicVariables
+  - mail
+  - messageResponses
+  - registers
+  - scripts
+- public
+  - resizes
+  - storage
+    - app
+- src
+  - lib
+    - abstracts
+    - commands
+    - decorators
+    - examples
+    - filters
+    - interfaces
+    - main
+    - pipes
+    - utils
+    - vendor
+      - disk
+        - enums
+        - interfaces
+        - models
+        - storages
+          - local-files
+          - s3-files
+      - mail
+        - templates
+      - resize-images
+        - interfaces
+  - modules
+    - database
+      - migrations
+      - seeds
+    - nameModule (Base module structure)
+      - domain
+        - interfaces
+        - models
+        - repositories
+        - services
+      - infrastructure
+        - commands
+        - controllers
+        - entities
+        - repositories
+- views
+  - layouts
+  - partials

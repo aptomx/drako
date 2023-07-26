@@ -10,13 +10,13 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
 import filesystemsConfig from 'config/registers/filesystems.config';
-import { DiskService } from '../disk.service';
-import { IFileResponse } from '../interfaces/file-response.interface';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
 import * as mime from 'mime-types';
 import * as sharp from 'sharp';
-import { IMethodsBase } from '../interfaces/methods-base';
-import { optimizedFormatAvailableList } from '../enums/optimized-format-available';
+import { IMethodsBase } from '../../interfaces/methods-base';
+import { DiskService } from '../../disk.service';
+import { IFileResponse } from '../../interfaces/file-response.interface';
+import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
