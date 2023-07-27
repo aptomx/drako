@@ -1,7 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Drivers } from 'config/enums/database-driver.enum';
-import { MIGRATION_SRC, SEEDS_SRC } from 'config/constants';
+import { ENTITIES_SRC, MIGRATION_SRC, SEEDS_SRC } from 'config/constants';
 import { SeederOptions } from 'typeorm-extension';
 
 dotenv.config({ path: '.env' });
@@ -19,9 +19,9 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   password: process.env.DATABASE_PASSWORD,
   synchronize: false, //never use true
   migrationsTableName: 'migrations',
-  entities: ['dist/**/*.entity.{ts,js}'],
-  migrations: [`dist/${MIGRATION_SRC}/*.{ts,js}`],
-  seeds: [`dist/${SEEDS_SRC}/*.{ts,js}`],
+  entities: [`${ENTITIES_SRC}/*.entity.{ts,js}`],
+  migrations: [`${MIGRATION_SRC}/*.{ts,js}`],
+  seeds: [`${SEEDS_SRC}/*.{ts,js}`],
 };
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;

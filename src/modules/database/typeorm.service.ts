@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { dataSourceOptions } from '../../../config/database/connectors/typeorm.connector';
 import { IDatabaseConfig } from 'src/lib/interfaces/database.interface';
 import {
   DATABASE_HOST,
@@ -12,6 +11,7 @@ import {
   DATABASE_USER,
 } from 'config/magicVariables';
 import { Drivers } from 'config/enums/database-driver.enum';
+import { ENTITIES_SRC } from 'config/constants';
 
 @Injectable()
 export class TypeOrmService implements TypeOrmOptionsFactory, IDatabaseConfig {
@@ -56,7 +56,8 @@ export class TypeOrmService implements TypeOrmOptionsFactory, IDatabaseConfig {
       database: this.getDatabaseName(),
       username: this.getDatabaseUser(),
       password: this.getDatabasePassword(),
+      entities: [`dist/${ENTITIES_SRC}/*.entity.{ts,js}`],
     };
-    return { ...dataSourceOptions, ...options };
+    return options;
   }
 }
