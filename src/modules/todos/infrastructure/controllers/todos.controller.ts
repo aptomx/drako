@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { BASE_PREFIX_API } from 'config/magicVariables';
 import { TodosService } from '../../domain/services/todos.service';
@@ -18,10 +19,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { TodoCommand } from '../commands/todo.command';
-import { TodoModel } from '../../domain/models/todo.model';
 import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
 import { TodoUpdateCommand } from '../commands/todo-update.command';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
+import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
+import { TodoSearch } from '../commands/todo-search.command';
+import { ITodo } from '../../domain/interfaces/todos.interface';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
 
 @Controller(`${BASE_PREFIX_API}/todos`)
 export class TodosController {
@@ -35,7 +39,7 @@ export class TodosController {
     description: 'Return new register',
   })
   @Post()
-  async create(@Body() data: TodoCommand): Promise<TodoModel> {
+  async create(@Body() data: TodoCommand): Promise<IDisplayMessageSuccess> {
     return await this.todosService.create(data);
   }
 
@@ -47,8 +51,10 @@ export class TodosController {
     description: 'Return simple list',
   })
   @Get()
-  async findAll(): Promise<TodoModel[]> {
-    return await this.todosService.findAll();
+  async findAll(
+    @Query() query: TodoSearch,
+  ): Promise<ITodo[] | IPagination<ITodo>> {
+    return await this.todosService.findAll(query);
   }
 
   @ApiTags('Todos')
@@ -59,7 +65,9 @@ export class TodosController {
     description: 'Return detail',
   })
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<TodoModel> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ITodoWithUsersDummy> {
     return await this.todosService.findOne(id);
   }
 

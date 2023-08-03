@@ -4,3 +4,5 @@ export const MIGRATION_SRC = 'src/modules/database/migrations';
 export const SEEDS_SRC = 'src/modules/database/seeds';
 export const ERROR_GET_SIZE =
   'Measurements setting for image resizing not found';
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_PERPAGE = 10;

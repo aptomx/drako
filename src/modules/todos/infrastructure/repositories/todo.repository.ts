@@ -4,6 +4,15 @@ import { ITodoDatabaseRepository } from '../../domain/repositories/todo.interfac
 import { InjectRepository } from '@nestjs/typeorm';
 import { TodoEntity } from '../entities/todo.entity';
 import { Repository } from 'typeorm';
+import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
+import { TodoSearch } from '../commands/todo-search.command';
+import { ITodo } from '../../domain/interfaces/todos.interface';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
+import { Sort } from 'src/lib/enums/sort.enum';
+import { SortType } from 'src/lib/enums/sortType.enum';
+import { DEFAULT_PAGE, DEFAULT_PERPAGE } from 'config/constants';
+import getSkip from 'src/lib/utils/calculate-skip-pagination';
+import getTotalPages from 'src/lib/utils/calculate-total-pages';
 
 @Injectable()
 export class DatabaseTodoRepository implements ITodoDatabaseRepository {
@@ -12,24 +21,53 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
     private readonly todoEntityRepository: Repository<TodoEntity>,
   ) {}
 
-  async create(todo: TodoModel): Promise<TodoModel> {
+  async create(todo: TodoModel): Promise<void> {
     await this.todoEntityRepository.save(todo);
-    return todo;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async findAll(paginate: boolean): Promise<TodoModel[]> {
-    const todosEntity = await this.todoEntityRepository.find();
-    return todosEntity.map((data) => this.parseEntityToModel(data));
+  async findAll(
+    paginate = true,
+    query: TodoSearch,
+  ): Promise<ITodo[] | IPagination<ITodo>> {
+    const table = 'todo';
+    const {
+      sortType = SortType.CREATED_AT,
+      sort = Sort.DESC,
+      page = DEFAULT_PAGE,
+      perPage = DEFAULT_PERPAGE,
+    } = query;
+
+    const queryBuilder = this.todoEntityRepository
+      .createQueryBuilder(table)
+      .orderBy(`${table}.${sortType}`, sort);
+
+    if (!paginate) {
+      const list = await queryBuilder.getMany();
+      return list.map((data) => data as ITodo);
+    }
+
+    queryBuilder.skip(getSkip(page, perPage)).take(perPage);
+    const [items, total] = await queryBuilder.getManyAndCount();
+    return {
+      items: items.map((data) => data as ITodo),
+      meta: {
+        totalItems: total,
+        itemsPerPage: perPage,
+        totalPages: getTotalPages(total, perPage),
+        currentPage: page,
+      },
+    };
   }
 
-  async findOne(id: number): Promise<TodoModel> {
+  async findOne(id: number): Promise<ITodoWithUsersDummy> {
     const todoEntity = await this.todoEntityRepository.findOne({
       where: { id },
     });
-    return todoEntity
-      ? this.parseEntityToModel(todoEntity)
-      : (todoEntity as TodoModel);
+    const response = todoEntity as ITodoWithUsersDummy;
+    if (response) {
+      response.users = [1, 2, 3, 4, 5]; //simulate relation
+    }
+    return response;
   }
 
   async update(id: number, data: TodoModel): Promise<void> {
@@ -37,11 +75,11 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
     await this.todoEntityRepository.update(id, data);
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await this.todoEntityRepository.delete(id);
   }
 
-  private parseEntityToModel(data): TodoModel {
+  parseEntityToModel(data: TodoEntity): TodoModel {
     return new TodoModel(
       data.content,
       data.isDone,

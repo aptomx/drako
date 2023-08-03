@@ -8,5 +8,6 @@ export const ERROR_NOT_FOUND_REGISTER = (
 ) => {
   return `Registro con ${name} '${param}' no encontrado`;
 };
+export const CREATED_RECORD = 'Registro creado';
 export const UPDATED_RECORD = 'Registro actualizado';
 export const DELETED_RECORD = 'Registro eliminado';
