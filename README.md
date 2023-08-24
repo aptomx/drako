@@ -41,6 +41,13 @@ npm install
   - npm run migration:revert # Hace un rollback de las últimas migraciones ejecutadas
 ```
 
+- Nota:
+
+```
+  	Los archivos de migraciones se crean con errores de linter, por lo cual es
+    necesario dirigirse a ellos y aplicarles el formato correcto (ctrl + s).
+```
+
 ## Seeders
 
 - Ejecutar desde consola:
