@@ -9,10 +9,10 @@ import { TodoSearch } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { Sort } from 'src/lib/enums/sort.enum';
-import { SortType } from 'src/lib/enums/sortType.enum';
 import { DEFAULT_PAGE, DEFAULT_PERPAGE } from 'config/constants';
 import getSkip from 'src/lib/utils/calculate-skip-pagination';
 import getTotalPages from 'src/lib/utils/calculate-total-pages';
+import { TodoDatabaseError } from '../../errors/todoDatabaseError';
 
 @Injectable()
 export class DatabaseTodoRepository implements ITodoDatabaseRepository {
@@ -29,34 +29,42 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
     paginate = true,
     query: TodoSearch,
   ): Promise<ITodo[] | IPagination<ITodo>> {
-    const table = 'todo';
-    const {
-      sortType = SortType.CREATED_AT,
-      sort = Sort.DESC,
-      page = DEFAULT_PAGE,
-      perPage = DEFAULT_PERPAGE,
-    } = query;
+    try {
+      const table = 'todo';
+      const {
+        sortType = 'DJDJDJDJ',
+        sort = Sort.DESC,
+        page = DEFAULT_PAGE,
+        perPage = DEFAULT_PERPAGE,
+      } = query;
 
-    const queryBuilder = this.todoEntityRepository
-      .createQueryBuilder(table)
-      .orderBy(`${table}.${sortType}`, sort);
+      const queryBuilder = this.todoEntityRepository
+        .createQueryBuilder(table)
+        .orderBy(`${table}.${sortType}`, sort);
 
-    if (!paginate) {
-      const list = await queryBuilder.getMany();
-      return list.map((data) => data as ITodo);
+      if (!paginate) {
+        const list = await queryBuilder.getMany();
+        return list.map((data) => data as ITodo);
+      }
+
+      queryBuilder.skip(getSkip(page, perPage)).take(perPage);
+      const [items, total] = await queryBuilder.getManyAndCount();
+      return {
+        items: items.map((data) => data as ITodo),
+        meta: {
+          totalItems: total,
+          itemsPerPage: perPage,
+          totalPages: getTotalPages(total, perPage),
+          currentPage: page,
+        },
+      };
+    } catch (error) {
+      throw new TodoDatabaseError(
+        'Error getting todo list',
+        error.message,
+        true,
+      );
     }
-
-    queryBuilder.skip(getSkip(page, perPage)).take(perPage);
-    const [items, total] = await queryBuilder.getManyAndCount();
-    return {
-      items: items.map((data) => data as ITodo),
-      meta: {
-        totalItems: total,
-        itemsPerPage: perPage,
-        totalPages: getTotalPages(total, perPage),
-        currentPage: page,
-      },
-    };
   }
 
   async findOne(id: number): Promise<ITodoWithUsersDummy> {

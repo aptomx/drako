@@ -33,6 +33,7 @@ export class TodosService {
   }
 
   async findAll(query: TodoSearch): Promise<ITodo[] | IPagination<ITodo>> {
+    // throw new TodoError('Something was wrong');
     return await this.todoDatabaseRepository.findAll(true, query);
   }
 
