@@ -3,7 +3,9 @@ import { IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class TodoCommand {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: 'El cuerpo del mensaje es requerido',
+  })
   readonly content: string;
 
   @ApiProperty()

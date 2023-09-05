@@ -1,12 +1,19 @@
+interface ErrorDetails {
+  message: string;
+}
+
 export abstract class BaseError extends Error {
   abstract status: number;
 
-  abstract errorCode: string;
+  abstract errorCode: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  details?: any;
+  abstract errorName: string;
+
+  details?: ErrorDetails;
 
   isReportable?: boolean;
+
+  displayName?: string;
 
   constructor(message: string) {
     super(message);

@@ -3,13 +3,23 @@ import { BaseError } from '../../../lib/errors/baseError';
 export class TodoDatabaseError extends BaseError {
   status = 409;
 
-  errorCode = 'TODO_DATABASE_ERROR';
+  errorCode = 1102;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, details?: any, isReportable?: boolean) {
+  errorName = 'TODO_DATABASE_ERROR';
+
+  displayMessage;
+
+  constructor(
+    message: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    details?: any,
+    isReportable?: boolean,
+    displayMessage?: string,
+  ) {
     super(message);
     this.details = details;
     this.isReportable = isReportable || false;
+    this.displayMessage = displayMessage;
 
     Object.setPrototypeOf(this, TodoDatabaseError.prototype);
   }
