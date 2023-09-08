@@ -5,14 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TodoEntity } from '../entities/todo.entity';
 import { Repository } from 'typeorm';
 import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
-import { TodoSearch } from '../commands/todo-search.command';
+import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { Sort } from 'src/lib/enums/sort.enum';
 import { SortType } from 'src/lib/enums/sortType.enum';
-import { DEFAULT_PAGE, DEFAULT_PERPAGE } from 'config/constants';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGINATE,
+  DEFAULT_PERPAGE,
+} from 'config/constants';
 import getSkip from 'src/lib/utils/calculate-skip-pagination';
 import getTotalPages from 'src/lib/utils/calculate-total-pages';
+import isPaginate from 'src/lib/utils/is-paginate';
 
 @Injectable()
 export class DatabaseTodoRepository implements ITodoDatabaseRepository {
@@ -26,8 +31,7 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
   }
 
   async findAll(
-    paginate = true,
-    query: TodoSearch,
+    query: TodoSearchCommand,
   ): Promise<ITodo[] | IPagination<ITodo>> {
     const table = 'todo';
     const {
@@ -35,13 +39,14 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
       sort = Sort.DESC,
       page = DEFAULT_PAGE,
       perPage = DEFAULT_PERPAGE,
+      paginate = DEFAULT_PAGINATE,
     } = query;
 
     const queryBuilder = this.todoEntityRepository
       .createQueryBuilder(table)
       .orderBy(`${table}.${sortType}`, sort);
 
-    if (!paginate) {
+    if (!isPaginate(paginate)) {
       const list = await queryBuilder.getMany();
       return list.map((data) => data as ITodo);
     }

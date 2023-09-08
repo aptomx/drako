@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsIn, IsNumber } from 'class-validator';
+import { IsOptional, IsIn, IsNumber, IsBooleanString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { Sort } from '../enums/sort.enum';
 
@@ -39,4 +39,9 @@ export class PaginationCommand {
       'El campo orden debe ser uno de los siguientes valores: $constraint1',
   })
   readonly sort?: Sort;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBooleanString()
+  readonly paginate?: string;
 }

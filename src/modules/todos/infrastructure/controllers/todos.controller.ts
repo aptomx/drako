@@ -23,7 +23,7 @@ import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
 import { TodoUpdateCommand } from '../commands/todo-update.command';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
 import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
-import { TodoSearch } from '../commands/todo-search.command';
+import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 
@@ -52,7 +52,7 @@ export class TodosController {
   })
   @Get()
   async findAll(
-    @Query() query: TodoSearch,
+    @Query() query: TodoSearchCommand,
   ): Promise<ITodo[] | IPagination<ITodo>> {
     return await this.todosService.findAll(query);
   }

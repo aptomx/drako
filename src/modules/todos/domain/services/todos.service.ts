@@ -15,7 +15,7 @@ import {
   UPDATED_RECORD,
 } from 'config/messageResponses';
 import { ITodoWithUsersDummy } from '../interfaces/todos-with-users-dummy.interface';
-import { TodoSearch } from '../../infrastructure/commands/todo-search.command';
+import { TodoSearchCommand } from '../../infrastructure/commands/todo-search.command';
 import { ITodo } from '../interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 
@@ -32,8 +32,10 @@ export class TodosService {
     return { displayMessage: CREATED_RECORD };
   }
 
-  async findAll(query: TodoSearch): Promise<ITodo[] | IPagination<ITodo>> {
-    return await this.todoDatabaseRepository.findAll(true, query);
+  async findAll(
+    query: TodoSearchCommand,
+  ): Promise<ITodo[] | IPagination<ITodo>> {
+    return await this.todoDatabaseRepository.findAll(query);
   }
 
   async findOne(id: number): Promise<ITodoWithUsersDummy> {
