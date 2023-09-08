@@ -7,14 +7,7 @@ import {
 import { ITodoDatabaseRepository } from '../repositories/todo.interface';
 import { TodoCommand } from '../../infrastructure/commands/todo.command';
 import { TodoModel } from '../models/todo.model';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import {
-  CREATED_RECORD,
-  DELETED_RECORD,
-  ERROR_NOT_FOUND_REGISTER,
-  UPDATED_RECORD,
-} from 'config/messageResponses';
-import { ITodoWithUsersDummy } from '../interfaces/todos-with-users-dummy.interface';
+import { ERROR_NOT_FOUND_REGISTER } from 'config/messageResponses';
 import { TodoSearchCommand } from '../../infrastructure/commands/todo-search.command';
 import { ITodo } from '../interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
@@ -26,10 +19,9 @@ export class TodosService {
     private readonly todoDatabaseRepository: ITodoDatabaseRepository,
   ) {}
 
-  async create(data: TodoCommand): Promise<IDisplayMessageSuccess> {
+  async create(data: TodoCommand): Promise<TodoModel> {
     const todoM = new TodoModel(data.content, data.isDone);
-    await this.todoDatabaseRepository.create(todoM);
-    return { displayMessage: CREATED_RECORD };
+    return await this.todoDatabaseRepository.create(todoM);
   }
 
   async findAll(
@@ -38,32 +30,29 @@ export class TodosService {
     return await this.todoDatabaseRepository.findAll(query);
   }
 
-  async findOne(id: number): Promise<ITodoWithUsersDummy> {
-    const data: ITodoWithUsersDummy = await this.todoDatabaseRepository.findOne(
-      id,
-    );
+  async findOne(id: number): Promise<ITodo> {
+    const data: ITodo = await this.todoDatabaseRepository.findOne(id);
+
     if (!data) {
       throw new NotFoundException(ERROR_NOT_FOUND_REGISTER(id));
     }
     return data;
   }
 
-  async update(id: number, isDone: boolean): Promise<IDisplayMessageSuccess> {
-    const todo: ITodoWithUsersDummy = await this.findOne(id);
+  async update(id: number, isDone: boolean): Promise<TodoModel> {
+    const todo: ITodo = await this.findOne(id);
     const todoM = this.todoDatabaseRepository.parseEntityToModel(todo);
     todoM.setIsDone(isDone);
     todoM.setRandomTitle();
-    await this.todoDatabaseRepository.update(id, todoM);
-    return { displayMessage: UPDATED_RECORD };
+    return await this.todoDatabaseRepository.update(id, todoM);
   }
 
-  async remove(id: number): Promise<IDisplayMessageSuccess> {
-    const todo: ITodoWithUsersDummy = await this.findOne(id);
+  async remove(id: number): Promise<void> {
+    const todo: ITodo = await this.findOne(id);
     const todoM = this.todoDatabaseRepository.parseEntityToModel(todo);
     if (!todoM.isEditable()) {
       throw new ConflictException('No se puede eliminar un todo completado');
     }
     await this.todoDatabaseRepository.delete(id);
-    return { displayMessage: DELETED_RECORD };
   }
 }

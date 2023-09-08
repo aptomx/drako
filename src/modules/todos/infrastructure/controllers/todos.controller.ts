@@ -21,11 +21,10 @@ import {
 import { TodoCommand } from '../commands/todo.command';
 import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
 import { TodoUpdateCommand } from '../commands/todo-update.command';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
 import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
+import { TodoModel } from '../../domain/models/todo.model';
 
 @Controller(`${BASE_PREFIX_API}/todos`)
 export class TodosController {
@@ -39,7 +38,7 @@ export class TodosController {
     description: 'Return new register',
   })
   @Post()
-  async create(@Body() data: TodoCommand): Promise<IDisplayMessageSuccess> {
+  async create(@Body() data: TodoCommand): Promise<TodoModel> {
     return await this.todosService.create(data);
   }
 
@@ -65,9 +64,7 @@ export class TodosController {
     description: 'Return detail',
   })
   @Get(':id')
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<ITodoWithUsersDummy> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<ITodo> {
     return await this.todosService.findOne(id);
   }
 
@@ -82,7 +79,7 @@ export class TodosController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: TodoUpdateCommand,
-  ): Promise<IDisplayMessageSuccess> {
+  ): Promise<TodoModel> {
     await this.todosService.findOne(id);
     return await this.todosService.update(id, data.isDone);
   }
@@ -95,10 +92,9 @@ export class TodosController {
     description: SWAGGER_SUMMARY_BASIC,
   })
   @Delete(':id')
-  async remove(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<IDisplayMessageSuccess> {
-    await this.todosService.findOne(id);
-    return await this.todosService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<ITodo> {
+    const data = await this.todosService.findOne(id);
+    await this.todosService.remove(id);
+    return data;
   }
 }

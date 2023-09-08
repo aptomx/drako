@@ -4,7 +4,6 @@ import { ITodoDatabaseRepository } from '../../domain/repositories/todo.interfac
 import { InjectRepository } from '@nestjs/typeorm';
 import { TodoEntity } from '../entities/todo.entity';
 import { Repository } from 'typeorm';
-import { ITodoWithUsersDummy } from '../../domain/interfaces/todos-with-users-dummy.interface';
 import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
@@ -26,8 +25,9 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
     private readonly todoEntityRepository: Repository<TodoEntity>,
   ) {}
 
-  async create(todo: TodoModel): Promise<void> {
+  async create(todo: TodoModel): Promise<TodoModel> {
     await this.todoEntityRepository.save(todo);
+    return todo;
   }
 
   async findAll(
@@ -53,7 +53,7 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
 
     queryBuilder.skip(getSkip(page, perPage)).take(perPage);
     const [items, total] = await queryBuilder.getManyAndCount();
-    return {
+    const response = {
       items: items.map((data) => data as ITodo),
       meta: {
         totalItems: total,
@@ -62,22 +62,21 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
         currentPage: page,
       },
     };
-  }
-
-  async findOne(id: number): Promise<ITodoWithUsersDummy> {
-    const todoEntity = await this.todoEntityRepository.findOne({
-      where: { id },
-    });
-    const response = todoEntity as ITodoWithUsersDummy;
-    if (response) {
-      response.users = [1, 2, 3, 4, 5]; //simulate relation
-    }
     return response;
   }
 
-  async update(id: number, data: TodoModel): Promise<void> {
+  async findOne(id: number): Promise<ITodo> {
+    const todoEntity = await this.todoEntityRepository.findOne({
+      where: { id },
+    });
+    const response = todoEntity as ITodo;
+    return response;
+  }
+
+  async update(id: number, data: TodoModel): Promise<TodoModel> {
     data.setUpdatedAt();
     await this.todoEntityRepository.update(id, data);
+    return data;
   }
 
   async delete(id: number): Promise<void> {
