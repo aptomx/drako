@@ -50,7 +50,7 @@ export class UserEntity implements IUser {
   @Column({ type: 'varchar', length: 255, nullable: true })
   driver: string;
 
-  @Column({ type: 'text', unique: true, nullable: true })
+  @Column({ type: 'text', nullable: true })
   token: string;
 
   @OneToOne(() => UserRoleEntity, (userRole) => userRole.user)
