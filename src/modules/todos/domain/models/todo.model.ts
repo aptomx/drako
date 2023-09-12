@@ -21,26 +21,26 @@ export class TodoModel implements ITodo {
   ) {
     this.content = content;
     this.isDone = isDone;
-    this.id = id ? id : 0;
-    this.createdAt = createdAt ? createdAt : new Date();
-    this.updatedAt = updatedAt ? updatedAt : new Date();
+    this.id = id;
+    this.createdAt = createdAt ? new Date(createdAt) : undefined;
+    this.updatedAt = updatedAt ? new Date(updatedAt) : undefined;
   }
 
-  isEditable() {
+  isEditable?() {
     return this.isDone === false;
   }
 
-  setUpdatedAt() {
+  setUpdatedAt?() {
     const date = new Date();
     this.updatedAt = date;
     return date;
   }
 
-  setRandomTitle() {
+  setRandomTitle?() {
     this.content = getRandomAlphanumeric(10);
   }
 
-  setIsDone(isDone) {
+  setIsDone?(isDone) {
     this.isDone = isDone;
   }
 }
