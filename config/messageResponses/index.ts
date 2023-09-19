@@ -11,3 +11,5 @@ export const ERROR_NOT_FOUND_REGISTER = (
 export const CREATED_RECORD = 'Registro creado';
 export const UPDATED_RECORD = 'Registro actualizado';
 export const DELETED_RECORD = 'Registro eliminado';
+export const ERROR_USER_EXIST =
+  'El correo electrónico ya se encuentra registrado';

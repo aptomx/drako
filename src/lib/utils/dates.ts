@@ -30,3 +30,10 @@ dayjs.updateLocale('es', {
 
 // Date in db only Date (search)-> [dayjs(dateStart).utc().startOf('d').format() , dayjs(dateEnd).utc().endOf('d').format()]
 // Date in db only Time (search)-> dayjs(dayjs().format(`YYYY-MM-DD`) + ` ${19:00:00}`).utc().format();
+export function formatDateStart(dateStart: string) {
+  return dayjs(dateStart).startOf('d').format();
+}
+
+export function formatDateEnd(dateEnd: string) {
+  return dayjs(dateEnd).endOf('d').format();
+}

@@ -14,6 +14,10 @@ export class MailService {
   private readonly templateTypes = {
     example: 'example',
     example2: 'example2',
+    verifyEmail: 'verify-email',
+    welcomeAdmin: 'welcome-admin',
+    recoveryPasswordCode: 'recovery-password-code',
+    passwordChanged: 'password-changed',
   };
 
   private readonly logger: Logger = new Logger('Mails');

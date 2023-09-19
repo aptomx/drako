@@ -10,7 +10,7 @@ export interface ITodoDatabaseRepository {
   create(data: TodoModel): Promise<TodoModel>;
   update(id: number, data: TodoModel): Promise<TodoModel>;
   delete(id: number): Promise<void>;
-  parseEntityToModel(data: TodoEntity): TodoModel;
+  parseEntityToModel(data: TodoEntity | ITodo): TodoModel;
 }
 
 export const ITodoDatabaseRepository = Symbol('ITodoDatabaseRepository');

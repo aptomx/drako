@@ -8,7 +8,7 @@ import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { Sort } from 'src/lib/enums/sort.enum';
-import { SortType } from 'src/lib/enums/sortType.enum';
+import { SortType } from 'src/lib/enums/sort-type.enum';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGINATE,
@@ -83,7 +83,7 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
     await this.todoEntityRepository.delete(id);
   }
 
-  parseEntityToModel(data: TodoEntity): TodoModel {
+  parseEntityToModel(data: TodoEntity | ITodo): TodoModel {
     return new TodoModel(
       data.content,
       data.isDone,
