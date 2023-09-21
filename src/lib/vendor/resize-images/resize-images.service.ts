@@ -104,7 +104,9 @@ export class ResizeImagesService {
     temporalFiles: ITemporalFiles[];
   }> {
     const sizes = await this.getAndValidateSizes(type);
-    const fileName = getRandomAlphanumeric(10, true);
+    const fileName = `${
+      path.parse(file.originalname).name
+    }-${getRandomAlphanumeric(15, true)}`;
 
     const dateFolder = `output-${file.fieldname}-${dayjs().format(
       'YYYY-MM-DD-HHmmss',

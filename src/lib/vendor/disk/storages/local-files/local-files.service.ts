@@ -11,6 +11,7 @@ import { IMethodsBase } from '../../interfaces/methods-base';
 import { DiskService } from '../../disk.service';
 import { IFileResponse } from '../../interfaces/file-response.interface';
 import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
+import * as pathLibrary from 'path';
 
 @Injectable()
 export class LocalFilesService implements IMethodsBase {
@@ -40,7 +41,9 @@ export class LocalFilesService implements IMethodsBase {
     }
     let nameFile = name;
     if (!name) {
-      nameFile = getRandomAlphanumeric(15, true);
+      nameFile = `${
+        pathLibrary.parse(file.originalname).name
+      }-${getRandomAlphanumeric(15, true)}`;
     }
     const fullPath = `${savePath}/${nameFile}.${extension}`;
 
