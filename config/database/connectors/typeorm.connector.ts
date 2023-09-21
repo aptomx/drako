@@ -3,12 +3,13 @@ import * as dotenv from 'dotenv';
 import { Drivers } from 'config/enums/database-driver.enum';
 import { ENTITIES_SRC, MIGRATION_SRC, SEEDS_SRC } from 'config/constants';
 import { SeederOptions } from 'typeorm-extension';
+import { DatabaseInvalidDriverError } from '../errors/database-invalid-driver-error';
 
 dotenv.config({ path: '.env' });
 
 const driver = process.env.DATABASE_TYPE;
 if (!Drivers[driver]) {
-  throw new Error('Database: Driver not valid');
+  throw new DatabaseInvalidDriverError('Database: Driver not valid');
 }
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: Drivers[driver],

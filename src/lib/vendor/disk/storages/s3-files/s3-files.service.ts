@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import {
   S3Client,
@@ -17,6 +17,7 @@ import { IMethodsBase } from '../../interfaces/methods-base';
 import { DiskService } from '../../disk.service';
 import { IFileResponse } from '../../interfaces/file-response.interface';
 import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
+import { DiskUnexpectedS3Error } from '../../errors/disk-unexpected-S3-error';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
@@ -106,7 +107,7 @@ export class S3FilesService implements IMethodsBase {
         url: `https://${this.fsConfig.s3BucketName}.s3.${this.fsConfig.s3region}.amazonaws.com/${pathS3}`,
       };
     } catch (e) {
-      throw new BadRequestException(e);
+      throw new DiskUnexpectedS3Error(e);
     }
   }
 }

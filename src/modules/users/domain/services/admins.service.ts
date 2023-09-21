@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IUsersDatabaseRepository } from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
@@ -25,6 +20,8 @@ import { AuthService } from 'src/modules/auth/domain/services/auth.service';
 import { MailService } from 'src/lib/vendor/mail/mail.service';
 import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
 import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
+import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
+
 @Injectable()
 export class AdminsService {
   constructor(
@@ -49,7 +46,9 @@ export class AdminsService {
     const existingUser = await this.usersService.findOneByEmail(data.email);
 
     if (existingUser) {
-      throw new ConflictException('Ya existe un usuario con este email');
+      throw new UserAlreadyExistsError(
+        'Ya existe un usuario registrado con el mismo email',
+      );
     }
 
     const password = getRandomAlphanumeric();
@@ -102,7 +101,7 @@ export class AdminsService {
       existingUser.id,
       data.email,
     );
-    if (verifyEmail) throw new InternalServerErrorException(ERROR_USER_EXIST);
+    if (verifyEmail) throw new UserAlreadyExistsError(ERROR_USER_EXIST);
 
     let existingUserM =
       this.adminDatabaseRepository.parseEntityToModel(existingUser);

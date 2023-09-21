@@ -11,6 +11,7 @@ import { IMethodsBase } from '../../interfaces/methods-base';
 import { DiskService } from '../../disk.service';
 import { IFileResponse } from '../../interfaces/file-response.interface';
 import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
+import { DiskNotImplementedMethodError } from '../../errors/disk-not-implemented-method-error';
 
 @Injectable()
 export class LocalFilesService implements IMethodsBase {
@@ -77,7 +78,7 @@ export class LocalFilesService implements IMethodsBase {
   }
 
   async getPresignedUrl(url: string): Promise<string> {
-    throw new Error('Method not implemented.');
+    throw new DiskNotImplementedMethodError('Method not implemented.');
   }
 
   async upload(
@@ -85,6 +86,6 @@ export class LocalFilesService implements IMethodsBase {
     pathS3: string,
     privateACL?: boolean,
   ): Promise<IFileResponse> {
-    throw new Error('Method not implemented.');
+    throw new DiskNotImplementedMethodError('Method not implemented.');
   }
 }

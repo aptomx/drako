@@ -1,9 +1,8 @@
-import {
-  Injectable,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthUnauthorizedError } from '../../modules/auth/errors/auth-unauthorized-error';
+import { AuthInactiveAccountError } from '../../modules/auth/errors/auth-inactive-account-error';
+import { AuthEmailNotVerifiedError } from '../../modules/auth/errors/auth-email-not-verified-error';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -15,18 +14,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw (
         err ||
-        new UnauthorizedException('Sin autorización, inicie sesión nuevamente')
+        new AuthUnauthorizedError('Sin autorización, inicie sesión nuevamente')
       );
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException(
+      throw new AuthInactiveAccountError(
         'Su cuenta está inactiva, comuníquese con soporte para obtener más información',
       );
     }
 
     if (!user.emailVerified) {
-      throw new UnauthorizedException(
+      throw new AuthEmailNotVerifiedError(
         'La cuenta de correo electrónico no ha sido verificada. Por favor revise su bandeja de entrada',
       );
     }
