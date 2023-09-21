@@ -17,6 +17,7 @@ import { IMethodsBase } from '../../interfaces/methods-base';
 import { DiskService } from '../../disk.service';
 import { IFileResponse } from '../../interfaces/file-response.interface';
 import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
+import * as pathLibrary from 'path';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
@@ -51,7 +52,9 @@ export class S3FilesService implements IMethodsBase {
 
     let newFileName = name;
     if (!name) {
-      newFileName = getRandomAlphanumeric(15, true);
+      newFileName = `${
+        pathLibrary.parse(file.originalname).name
+      }-${getRandomAlphanumeric(15, true)}`;
     }
     const pathS3 = `upload/${pathFolder}/${newFileName}.${extension}`;
     return await this.upload(bufferInfo, pathS3, isPrivate);
