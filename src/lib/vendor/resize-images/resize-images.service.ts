@@ -11,6 +11,7 @@ import { ITemporalFiles } from './interfaces/temporal-files.interface';
 import { IValidSizes } from './interfaces/valid-sizes.interface';
 import { IUploadSizeComplete } from './interfaces/upload-complete.interface';
 import { DiskService } from '../disk/disk.service';
+import { ResizeImageMeasurementsNotFoundError } from './errors/resize-image-measurements-not-found-error';
 
 @Injectable()
 export class ResizeImagesService {
@@ -39,7 +40,7 @@ export class ResizeImagesService {
   private getAndValidateSizes(type: string): IValidSizes[] {
     const getSizes = this.sizes[type];
     if (!getSizes) {
-      throw new Error(ERROR_GET_SIZE);
+      throw new ResizeImageMeasurementsNotFoundError(ERROR_GET_SIZE);
     }
     return getSizes;
   }

@@ -52,7 +52,7 @@ export function getErrorMessage(
  * @param error - string
  * @returns - ex `Bad Request` become `BAD_REQUEST`
  */
-function formatErrorCode(error: string): string {
+export function formatErrorCode(error: string): string {
   return toUpper(snakeCase(error));
 }
 /*

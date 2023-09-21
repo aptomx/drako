@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../../users/domain/services/users.service';
@@ -25,6 +17,14 @@ import { IRecoveryCode } from '../interfaces/recovery-code.interface';
 import { VerifyRecoveryPasswordCommand } from '../../infrastructure/commands/verify-recovery-password.command';
 import { UpdateRecoveryPasswordCommand } from '../../infrastructure/commands/update-recovery-password.command';
 import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
+import { UserNotFoundError } from '../../../users/errors/user-not-found-error';
+import { AuthMissingCredentialsError } from '../../errors/auth-missing-credentials-error';
+import { AuthIncorrectPasswordError } from '../../errors/auth-incorrect-password-error';
+import { AuthInvalidTokenError } from '../../errors/auth-invalid-token-error';
+import { AuthMissingRecoveryCodeIdError } from '../../errors/auth-missing-recovery-code-id-error';
+import { AuthInvalidRecoveryCodeError } from '../../errors/auth-invalid-recovery-code-error';
+import { AuthAccountAlreadyVerifiedError } from '../../errors/auth-account-already-verified-error';
+import { AuthNoPasswordResetRequestError } from '../../errors/auth-no-password-reset-request-error';
 
 @Injectable()
 export class AuthService {
@@ -43,11 +43,11 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError('Usuario no encontrado');
     }
 
     if (!user.password) {
-      throw new UnauthorizedException(
+      throw new AuthMissingCredentialsError(
         'El usuario no cuenta con una contraseña asignada',
       );
     }
@@ -55,7 +55,7 @@ export class AuthService {
     const isPasswordMatching = await bcrypt.compare(pass, user.password);
 
     if (!isPasswordMatching) {
-      throw new UnauthorizedException('La contraseña no coincide');
+      throw new AuthIncorrectPasswordError('La contraseña no coincide');
     }
     return user;
   }
@@ -77,7 +77,7 @@ export class AuthService {
     try {
       return await this.jwtService.verify(token);
     } catch (error) {
-      throw new BadRequestException('El token es inválido');
+      throw new AuthInvalidTokenError('El token es inválido');
     }
   }
 
@@ -93,7 +93,9 @@ export class AuthService {
   ): Promise<RecoveryCodeModel> {
     data.updateToken(token);
     if (!data.id) {
-      throw new BadRequestException('El id es requerido para actualizar');
+      throw new AuthMissingRecoveryCodeIdError(
+        'El id es requerido para actualizar',
+      );
     }
     return await this.authDatabaseRepository.updateRecoveryCode(data.id, data);
   }
@@ -108,7 +110,7 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
-      throw new BadRequestException('El usuario no existe');
+      throw new UserNotFoundError('El usuario no existe');
     }
 
     const code = getRandomNumeric(6);
@@ -143,19 +145,23 @@ export class AuthService {
     );
 
     if (!exitingCode) {
-      throw new BadRequestException('El código proporcionado no es válido');
+      throw new AuthInvalidRecoveryCodeError(
+        'El código proporcionado no es válido',
+      );
     }
 
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
-      throw new UnauthorizedException(
+      throw new AuthInvalidRecoveryCodeError(
         'El código para verificar la cuenta es inválido o ha expirado',
       );
     }
     const user = await this.usersService.findOne(exitingCode.userId);
     if (user.emailVerified) {
-      throw new ConflictException('La cuenta ya se encuentra verificada');
+      throw new AuthAccountAlreadyVerifiedError(
+        'La cuenta ya se encuentra verificada',
+      );
     }
     const exitingCodeMo = this.parseEntityToModel(exitingCode);
     await this.updateRecoveryCodeToken(exitingCodeMo, null);
@@ -178,13 +184,15 @@ export class AuthService {
     );
 
     if (!exitingCode) {
-      throw new BadRequestException('El código proporcionado no es válido');
+      throw new AuthInvalidRecoveryCodeError(
+        'El código proporcionado no es válido',
+      );
     }
 
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
-      throw new UnauthorizedException(
+      throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );
     }
@@ -198,7 +206,7 @@ export class AuthService {
       await this.authDatabaseRepository.findRecoveryCodeByToken(token);
 
     if (!exitingCode) {
-      throw new ConflictException(
+      throw new AuthNoPasswordResetRequestError(
         'No cuenta con una solicitud de cambio de contraseña',
       );
     }
@@ -206,7 +214,7 @@ export class AuthService {
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
-      throw new UnauthorizedException(
+      throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );
     }

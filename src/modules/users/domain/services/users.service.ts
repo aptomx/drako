@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IUsersDatabaseRepository } from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { UserModel } from '../models/user.model';
@@ -6,6 +6,7 @@ import { UserEntity } from '../../infrastructure/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { MailService } from 'src/lib/vendor/mail/mail.service';
+import { UserNotFoundError } from '../../errors/user-not-found-error';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,7 @@ export class UsersService {
   async findOne(id: number): Promise<IUser> {
     const data: IUser = await this.usersDatabaseRepository.findOne(id);
     if (!data) {
-      throw new BadRequestException(`El usuario con Id ${id} no existe`);
+      throw new UserNotFoundError(`El usuario con Id ${id} no existe`);
     }
     data.password = undefined;
     return data;
