@@ -7,6 +7,7 @@ import * as exphbs from 'express-handlebars';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BASE_PREFIX_API } from 'config/magicVariables';
+import { LoggerReportingService } from './lib/vendor/loggerReporting/loggerReporting.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -25,6 +26,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  LoggerReportingService.init();
 
   //Config template
   const hbs = exphbs.create({
