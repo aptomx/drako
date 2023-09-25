@@ -10,6 +10,8 @@ import mailConfig from 'config/registers/mail.config';
 import appConfig from 'config/registers/app.config';
 import { MailMissingDriverError } from './errors/mail-missing-driver-error';
 import { MailTemplateNotFoundError } from './errors/mail-template-not-found-error';
+import { LoggerReportingService } from '../loggerReporting/loggerReporting.service';
+import { MailError } from './errors/mail-error';
 
 @Injectable()
 export class MailService {
@@ -84,6 +86,13 @@ export class MailService {
           error: exceptionStack,
           data: parameters,
         });
+
+        const mailError = new MailError('Error sending email', {
+          message: error.message,
+          parameters,
+        });
+
+        LoggerReportingService.captureException(mailError);
       });
   }
 }

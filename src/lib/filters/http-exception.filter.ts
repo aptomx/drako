@@ -13,6 +13,7 @@ import {
   getCode,
   getErrorMessage,
 } from '../utils/errors.util';
+import { LoggerReportingService } from '../vendor/loggerReporting/loggerReporting.service';
 import { BaseError } from '../errors/base-error';
 import { TypeORMError } from 'typeorm';
 
@@ -59,10 +60,10 @@ export class HttpFilterException implements ExceptionFilter {
     customResponse.timestamp = new Date().toISOString();
     customResponse.stack = exceptionStack;
 
-    this.logger.error(customResponse);
-
     if (isReportable) {
-      // SEND TO SENTRY
+      LoggerReportingService.captureException(exception);
+    } else {
+      this.logger.error(customResponse);
     }
 
     response.status(status).send(customResponse);
