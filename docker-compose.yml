@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: nest-app
+    build:
+      context: .
+      target: ${STAGE}
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app/
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    expose:
+      - ${APP_PORT}
+    env_file:
+      - .env
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_PORT: ${APP_PORT}
+      APP_URL: ${APP_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      EMAIL_TEST: ${EMAIL_TEST}
+      DISK_CONFIG: ${DISK_CONFIG}
+      CONTACT_ADMIN: ${CONTACT_ADMIN}
+      DATABASE_HOST: db
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_TYPE: ${DATABASE_TYPE}
+
+  db:
+    container_name: db
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+    expose:
+      - '5432'
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+    volumes:
+      - db-vol:/var/lib/postgresql/data
+
+volumes:
+  db-vol:
+    external: false

@@ -63,3 +63,29 @@ npm install
 - npm run start:dev # watch mode
 - npm run start:prod # production mode
 ```
+
+# Docker
+
+Run docker-compose.yml
+
+```bash
+$ docker-compose up -d
+```
+
+Run migrations
+
+```bash
+$ docker-compose exec app npm run migration:run
+```
+
+Turn off docker-compose.yml
+
+```bash
+$ docker-compose down
+```
+
+Turn off docker-compose.yml and remove volumes
+
+```bash
+$ docker-compose down -v
+```
