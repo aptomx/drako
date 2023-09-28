@@ -66,25 +66,31 @@ npm install
 
 # Docker
 
-Run docker-compose.yml
+Ejecutar docker-compose.yml
 
 ```bash
 $ docker-compose up -d
 ```
 
-Run migrations
+Ejecutar migraciones
 
 ```bash
 $ docker-compose exec app npm run migration:run
 ```
 
-Turn off docker-compose.yml
+Ejecutar seeds
+
+```bash
+$ docker-compose exec app npm run seed
+```
+
+Apagar docker-compose.yml
 
 ```bash
 $ docker-compose down
 ```
 
-Turn off docker-compose.yml and remove volumes
+Apagar docker-compose.yml y eliminar volúmenes
 
 ```bash
 $ docker-compose down -v
