@@ -89,7 +89,7 @@ export class UsersService {
     await this.usersDatabaseRepository.create(newUser, UserRoles.Client);
 
     await this.mailService.sendMail(
-      'welcomeClient',
+      'welcomeSocialNetwork',
       [newUser.email],
       {
         name: newUser.fullName,
