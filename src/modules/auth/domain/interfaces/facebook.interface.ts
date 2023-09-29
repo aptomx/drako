@@ -1,5 +1,7 @@
+import { DriversSocialNetwork } from "../enums/drivers-social-network.enum";
+
 export interface IFacebook {
-  provider: 'facebook';
+  provider: DriversSocialNetwork.Facebook;
   email: string;
   picture: {
     data: {
