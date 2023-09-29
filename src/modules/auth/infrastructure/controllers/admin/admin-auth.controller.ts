@@ -6,6 +6,7 @@ import {
   UseGuards,
   Request,
   Get,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../../domain/services/auth.service';
@@ -14,6 +15,7 @@ import { LoginCommand } from '../../commands/login-command';
 import { BASE_PREFIX_API } from '../../../../../../config/magicVariables';
 import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
 import { IAuthentication } from 'src/modules/auth/domain/interfaces/authentication.interface';
+import { UserRoles } from 'src/lib/enums/user-roles.enum';
 
 @Controller(`${BASE_PREFIX_API}/admin/auth`)
 export class AdminAuthController {
@@ -32,6 +34,9 @@ export class AdminAuthController {
     @Request() req,
   ): Promise<IAuthentication> {
     const { user } = req;
+    if (user.userRole.roleId != UserRoles.Admin) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
     const token = await this.authService.generateTokenByUser(user);
 
     return {
@@ -48,6 +53,10 @@ export class AdminAuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async get(@Request() req) {
-    return req.user;
+    const { user } = req;
+    if (user.userRole.roleId != UserRoles.Admin) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return user;
   }
 }

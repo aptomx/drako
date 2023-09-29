@@ -140,7 +140,7 @@ export class BasicController {
 
   @ApiTags('Example')
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'Return image resize records in buffers',
   })
   @ApiConsumes('multipart/form-data')

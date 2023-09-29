@@ -91,7 +91,7 @@ export class AdminUsersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Admin' })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: 'Update an photo admin user if exist',
   })
   @UseInterceptors(FileInterceptor('file'))

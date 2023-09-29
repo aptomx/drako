@@ -16,7 +16,7 @@ export class AuthController {
   @ApiTags('Auth')
   @ApiOperation({ summary: 'Auth' })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: 'returns an updated user if was verified successfully',
   })
   @Post('verify/account')
@@ -29,7 +29,7 @@ export class AuthController {
   @ApiTags('Auth')
   @ApiOperation({ summary: 'Auth' })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description:
       'returns an confirmation message if a email was sent succesfully',
   })
@@ -48,7 +48,7 @@ export class AuthController {
   @ApiTags('Auth')
   @ApiOperation({ summary: 'Auth' })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: 'returns a token if code is valid',
   })
   @Post('validate/recovery/token')

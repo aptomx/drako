@@ -96,6 +96,20 @@ export class UserModel implements IUser {
     this.fullName = `${this.firstName} ${this.lastName}`;
   }
 
+  updateBySocialNetwork?(
+    firstName: string,
+    lastName: string,
+    driver: string,
+    token: string,
+  ) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.fullName = `${this.firstName} ${this.lastName}`;
+    this.driver = driver;
+    this.token = token;
+    this.emailVerified = true;
+  }
+
   updateUserPicture?(photo: string) {
     this.photo = photo;
   }
