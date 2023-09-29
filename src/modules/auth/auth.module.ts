@@ -16,6 +16,10 @@ import { AuthService } from './domain/services/auth.service';
 import { LocalStrategy } from 'src/lib/strategies/local.strategy';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { AdminAuthController } from './infrastructure/controllers/admin/admin-auth.controller';
+import { LoginSocialNetworkController } from './infrastructure/controllers/login-social-network.controller';
+import { SocialNetworkService } from './domain/services/social-network.service';
+import { HttpModule } from '@nestjs/axios';
+import { DiskModule } from 'src/lib/vendor/disk/disk.module';
 
 @Module({
   imports: [
@@ -35,9 +39,12 @@ import { AdminAuthController } from './infrastructure/controllers/admin/admin-au
       },
       inject: [ConfigService],
     }),
+    HttpModule,
+    DiskModule,
   ],
   providers: [
     AuthService,
+    SocialNetworkService,
     LocalStrategy,
     JwtStrategy,
     {
@@ -45,7 +52,11 @@ import { AdminAuthController } from './infrastructure/controllers/admin/admin-au
       useClass: DatabaseAuthRepository,
     },
   ],
-  controllers: [AuthController, AdminAuthController],
+  controllers: [
+    AuthController,
+    AdminAuthController,
+    LoginSocialNetworkController,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

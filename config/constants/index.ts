@@ -7,3 +7,9 @@ export const ERROR_GET_SIZE =
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PERPAGE = 10;
 export const DEFAULT_PAGINATE = 'true';
+export const SOCIAL_NETWORK_TOKEN_ERROR = (driver) => {
+  return `Token de '${driver}' no válido`;
+};
+export const SOCIAL_NETWORK_EMAIL_ERROR = (driver) => {
+  return `No se puede validar el correo electrónico debido a permisos de su cuenta de ${driver}. Intente iniciar sesión con otro método`;
+};

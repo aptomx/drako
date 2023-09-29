@@ -18,6 +18,7 @@ export class MailService {
     welcomeAdmin: 'welcome-admin',
     recoveryPasswordCode: 'recovery-password-code',
     passwordChanged: 'password-changed',
+    welcomeClient: 'welcome-client',
   };
 
   private readonly logger: Logger = new Logger('Mails');
