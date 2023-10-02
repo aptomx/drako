@@ -25,7 +25,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "start:prod-heroku": "node dist/src/main.js",
     "prepare": "husky install",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d config/database/connectors/typeorm.connector.ts",
+    "typeorm": "npm run build && ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d config/database/connectors/typeorm.connector.ts",
     "migration:generate-with-path": "npm run typeorm -- migration:generate",
     "migration:generate": "ts-node ./config/scripts/migration.ts",
     "migration:run": "npm run typeorm -- migration:run",
@@ -50,6 +50,7 @@
     "axios": "^1.5.1",
     "@sentry/node": "^7.70.0",
     "@sentry/profiling-node": "^1.2.1",
+    "@types/winston": "^2.4.4",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -73,7 +74,9 @@
     "sharp": "^0.32.1",
     "typeorm": "^0.3.17",
     "typeorm-extension": "^2.8.1",
-    "typescript": "<4.8"
+    "typescript": "<4.8",
+    "winston": "^3.10.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",

@@ -15,7 +15,6 @@ export class LoggerReportingService {
   }
 
   static captureException(error: Error) {
-    console.log(error);
     Sentry.captureException(error);
   }
 }
