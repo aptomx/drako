@@ -14,6 +14,7 @@ import { LoginCommand } from '../../commands/login-command';
 import { BASE_PREFIX_API } from '../../../../../../config/magicVariables';
 import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
 import { IAuthentication } from 'src/modules/auth/domain/interfaces/authentication.interface';
+import { LoggerService } from '../../../../../lib/vendor/logger/logger.service';
 
 @Controller(`${BASE_PREFIX_API}/admin/auth`)
 export class AdminAuthController {
@@ -25,7 +26,7 @@ export class AdminAuthController {
     status: HttpStatus.CREATED,
     description: 'Returns an admin user and token if was logged successfully',
   })
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(new LocalAuthGuard(new LoggerService()))
   @Post('login')
   async login(
     @Body() _body: LoginCommand,

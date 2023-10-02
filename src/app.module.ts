@@ -17,6 +17,7 @@ import { BasicModule } from './lib/examples/basic.module';
 import { MainModule } from './lib/main/main.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { LoggerModule } from './lib/vendor/logger/logger.module';
 import jwtConfig from 'config/registers/jwt.config';
 
 @Module({
@@ -43,6 +44,7 @@ import jwtConfig from 'config/registers/jwt.config';
     TodosModule,
     UsersModule,
     AuthModule,
+    LoggerModule,
   ],
 })
 export class AppModule {

@@ -8,12 +8,13 @@ import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BASE_PREFIX_API } from 'config/magicVariables';
 import { LoggerReportingService } from './lib/vendor/loggerReporting/loggerReporting.service';
+import { LoggerService } from './lib/vendor/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   //Catch global errors
-  app.useGlobalFilters(new HttpFilterException());
+  app.useGlobalFilters(new HttpFilterException(new LoggerService()));
 
   // Handle all user input validation globally
   // Option: Whitelist -> true : skip additional parameters in parse request

@@ -4,7 +4,6 @@ import {
   Catch,
   ExceptionFilter,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Response } from 'express';
@@ -16,11 +15,11 @@ import {
 import { LoggerReportingService } from '../vendor/loggerReporting/loggerReporting.service';
 import { BaseError } from '../errors/base-error';
 import { TypeORMError } from 'typeorm';
+import { LoggerService } from '../vendor/logger/logger.service';
 
 @Catch() // Capture all exceptions
 export class HttpFilterException implements ExceptionFilter {
-  // Debug logger by console exception
-  private readonly logger: Logger = new Logger(HttpFilterException.name);
+  constructor(private readonly loggerService: LoggerService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public catch(exception: any, host: ArgumentsHost): void {
@@ -60,10 +59,10 @@ export class HttpFilterException implements ExceptionFilter {
     customResponse.timestamp = new Date().toISOString();
     customResponse.stack = exceptionStack;
 
+    this.loggerService.error(customResponse);
+
     if (isReportable) {
       LoggerReportingService.captureException(exception);
-    } else {
-      this.logger.error(customResponse);
     }
 
     response.status(status).send(customResponse);
