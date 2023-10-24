@@ -38,11 +38,10 @@ export class AdminsService {
   async findAll(
     query: FindAdminUsersCommand,
   ): Promise<IUser[] | IPagination<IUser>> {
-    const users = await this.adminDatabaseRepository.findAll(query);
-    return users;
+    return await this.adminDatabaseRepository.findAll(query);
   }
 
-  async create(data: CreateAdminUserCommand): Promise<UserModel> {
+  async create(data: CreateAdminUserCommand): Promise<IUser> {
     const existingUser = await this.usersService.findOneByEmail(data.email);
 
     if (existingUser) {
@@ -58,9 +57,11 @@ export class AdminsService {
     newUser.password = hashedPassword;
     newUser.phone = data.phone;
 
+    const adminRole = await this.usersService.findRole(UserRoles.Admin);
+
     const createdUser = await this.adminDatabaseRepository.create(
       newUser,
-      UserRoles.Admin,
+      adminRole.id,
     );
     const code = getRandomNumeric(6);
     const token = await this.authService.generateTokenByUser(createdUser);
@@ -90,11 +91,14 @@ export class AdminsService {
       'Verifica tu email',
     );
 
+    const createdUserM = this.parseEntityToModel(createdUser);
     //TODO:Añadir modulos
-    return createdUser.hidePassword();
+    createdUserM.hidePassword();
+
+    return createdUserM as IUser;
   }
 
-  async update(id: number, data: UpdateAdminUserCommand): Promise<UserModel> {
+  async update(id: number, data: UpdateAdminUserCommand): Promise<IUser> {
     const existingUser = await this.usersService.findOne(id);
 
     const verifyEmail = await this.usersDatabaseRepository.findOneByEmailNotId(
@@ -103,8 +107,7 @@ export class AdminsService {
     );
     if (verifyEmail) throw new UserAlreadyExistsError(ERROR_USER_EXIST);
 
-    let existingUserM =
-      this.adminDatabaseRepository.parseEntityToModel(existingUser);
+    let existingUserM = this.parseEntityToModel(existingUser);
     if (data.email != existingUserM.email) {
       existingUserM = await this.usersService.updateEmailVerified(
         existingUser.id,
@@ -136,12 +139,10 @@ export class AdminsService {
       data.lastName,
       data.phone,
     );
+    await this.adminDatabaseRepository.update(existingUser.id, existingUserM);
+    existingUserM.hidePassword();
 
-    const updatedUser = await this.adminDatabaseRepository.update(
-      existingUser.id,
-      existingUserM,
-    );
-    return updatedUser.hidePassword();
+    return existingUserM as IUser;
   }
 
   async delete(id: number): Promise<void> {
@@ -149,22 +150,35 @@ export class AdminsService {
     await this.adminDatabaseRepository.delete(id);
   }
 
-  async updatePicture(
-    id: number,
-    file: Express.Multer.File,
-  ): Promise<UserModel> {
+  async updatePicture(id: number, file: Express.Multer.File): Promise<IUser> {
     const existingUser = await this.usersService.findOne(id);
-    const existingUserM =
-      this.adminDatabaseRepository.parseEntityToModel(existingUser);
+    const existingUserM = this.parseEntityToModel(existingUser);
 
     const result = await this.diskService.uploadDisk(file, 'userPicture');
 
     existingUserM.updateUserPicture(result.url);
+    await this.adminDatabaseRepository.update(id, existingUserM);
 
-    const updatedUser = await this.adminDatabaseRepository.update(
-      id,
-      existingUserM,
+    existingUserM.hidePassword();
+
+    return existingUserM as IUser;
+  }
+
+  private parseEntityToModel(data: IUser): UserModel {
+    return new UserModel(
+      data.email,
+      data.firstName,
+      data.lastName,
+      data.isActive,
+      data.emailVerified,
+      data.password,
+      data.photo,
+      data.phone,
+      data.driver,
+      data.token,
+      data.id,
+      data.createdAt,
+      data.updatedAt,
     );
-    return updatedUser.hidePassword();
   }
 }

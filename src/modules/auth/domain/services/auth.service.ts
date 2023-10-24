@@ -12,7 +12,6 @@ import jwtConfig from 'config/registers/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { VerifyAccountCommand } from '../../infrastructure/commands/verify-account.command';
 import { IVerifyToken } from '../interfaces/verify-token.interface';
-import { RecoveryCodeEntity } from '../../infrastructure/entities/recovery-code.entity';
 import { IRecoveryCode } from '../interfaces/recovery-code.interface';
 import { VerifyRecoveryPasswordCommand } from '../../infrastructure/commands/verify-recovery-password.command';
 import { UpdateRecoveryPasswordCommand } from '../../infrastructure/commands/update-recovery-password.command';
@@ -65,12 +64,11 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async signTokenToRecoverPassword(user: UserModel) {
+  async signTokenToRecoverPassword(user: UserModel): Promise<string> {
     const payload = { email: user.email, sub: user.uuid, id: user.id };
-    const token = await this.jwtService.sign(payload, {
+    return this.jwtService.sign(payload, {
       expiresIn: this.config.jwtExpirationTimeRecoverPassword,
     });
-    return token;
   }
 
   async checkTokenJWT(token: string): Promise<IVerifyToken> {
@@ -81,16 +79,10 @@ export class AuthService {
     }
   }
 
-  parseEntityToModel(
-    data: RecoveryCodeEntity | IRecoveryCode,
-  ): RecoveryCodeModel {
-    return this.authDatabaseRepository.parseEntityToModel(data);
-  }
-
   async updateRecoveryCodeToken(
     data: RecoveryCodeModel,
     token: string,
-  ): Promise<RecoveryCodeModel> {
+  ): Promise<IRecoveryCode> {
     data.updateToken(token);
     if (!data.id) {
       throw new AuthMissingRecoveryCodeIdError(
@@ -100,9 +92,7 @@ export class AuthService {
     return await this.authDatabaseRepository.updateRecoveryCode(data.id, data);
   }
 
-  async createRecoveryCode(
-    code: RecoveryCodeModel,
-  ): Promise<RecoveryCodeModel> {
+  async createRecoveryCode(code: RecoveryCodeModel): Promise<IRecoveryCode> {
     return await this.authDatabaseRepository.createRecoveryCode(code);
   }
 
@@ -136,7 +126,7 @@ export class AuthService {
     );
   }
 
-  async verifyEmailAccount(data: VerifyAccountCommand): Promise<UserModel> {
+  async verifyEmailAccount(data: VerifyAccountCommand): Promise<IUser> {
     const { email, code } = data;
     const exitingCode = await this.authDatabaseRepository.findLastRecoveryCode(
       email,
@@ -166,11 +156,7 @@ export class AuthService {
     const exitingCodeMo = this.parseEntityToModel(exitingCode);
     await this.updateRecoveryCodeToken(exitingCodeMo, null);
 
-    const updatedUser = await this.usersService.updateEmailVerified(
-      user.id,
-      true,
-    );
-    return updatedUser;
+    return await this.usersService.updateEmailVerified(user.id, true);
   }
 
   async verifyRecoveryPasswordCode(
@@ -232,6 +218,18 @@ export class AuthService {
         name: user.fullName,
       },
       'Contraseña actualizada correctamente',
+    );
+  }
+
+  private parseEntityToModel(data: IRecoveryCode): RecoveryCodeModel {
+    return new RecoveryCodeModel(
+      data.code,
+      data.token,
+      data.type,
+      data.userId,
+      data.id,
+      data.createdAt,
+      data.updatedAt,
     );
   }
 }

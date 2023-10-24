@@ -9,17 +9,23 @@ import {
 import { JwtStrategy } from '../../lib/strategies/jwt.strategy';
 import { IAuthDatabaseRepository } from './domain/repositories/auth.interface';
 import { DatabaseAuthRepository } from './infrastructure/repositories/auth.repository';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecoveryCodeEntity } from './infrastructure/entities/recovery-code.entity';
 import { MailModule } from '../../lib/vendor/mail/mail.module';
 import { AuthService } from './domain/services/auth.service';
 import { LocalStrategy } from 'src/lib/strategies/local.strategy';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { AdminAuthController } from './infrastructure/controllers/admin/admin-auth.controller';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { UserEntity } from '../users/infrastructure/entities/user.entity';
+import { AuthLogsEntity } from './infrastructure/entities/auth-logs.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RecoveryCodeEntity]),
+    SequelizeModule.forFeature([
+      RecoveryCodeEntity,
+      UserEntity,
+      AuthLogsEntity,
+    ]),
     forwardRef(() => UsersModule),
     MailModule,
     JwtModule.registerAsync({

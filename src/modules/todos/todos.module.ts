@@ -4,10 +4,10 @@ import { DatabaseTodoRepository } from './infrastructure/repositories/todo.repos
 import { TodosService } from './domain/services/todos.service';
 import { TodosController } from './infrastructure/controllers/todos.controller';
 import { TodoEntity } from './infrastructure/entities/todo.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TodoEntity])],
+  imports: [SequelizeModule.forFeature([TodoEntity])],
   providers: [
     {
       provide: ITodoDatabaseRepository,

@@ -16,7 +16,7 @@ export class TodosService {
     private readonly todoDatabaseRepository: ITodoDatabaseRepository,
   ) {}
 
-  async create(data: TodoCommand): Promise<TodoModel> {
+  async create(data: TodoCommand): Promise<ITodo> {
     const todoM = new TodoModel(data.content, data.isDone);
     return await this.todoDatabaseRepository.create(todoM);
   }
@@ -36,9 +36,9 @@ export class TodosService {
     return data;
   }
 
-  async update(id: number, isDone: boolean): Promise<TodoModel> {
+  async update(id: number, isDone: boolean): Promise<ITodo> {
     const todo: ITodo = await this.findOne(id);
-    const todoM = this.todoDatabaseRepository.parseEntityToModel(todo);
+    const todoM = this.parseEntityToModel(todo);
     todoM.setIsDone(isDone);
     todoM.setRandomTitle();
     return await this.todoDatabaseRepository.update(id, todoM);
@@ -46,12 +46,22 @@ export class TodosService {
 
   async remove(id: number): Promise<void> {
     const todo: ITodo = await this.findOne(id);
-    const todoM = this.todoDatabaseRepository.parseEntityToModel(todo);
+    const todoM = this.parseEntityToModel(todo);
     if (!todoM.isEditable()) {
       throw new TodoCompletedDeletionError(
         'No se puede eliminar un todo completado',
       );
     }
     await this.todoDatabaseRepository.delete(id);
+  }
+
+  private parseEntityToModel(data: ITodo): TodoModel {
+    return new TodoModel(
+      data.content,
+      data.isDone,
+      data.id,
+      data.createdAt,
+      data.updatedAt,
+    );
   }
 }
