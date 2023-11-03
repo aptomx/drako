@@ -18,13 +18,14 @@ import { MainModule } from './lib/main/main.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import jwtConfig from 'config/registers/jwt.config';
+import appleConfig from 'config/registers/apple.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      load: [appConfig, mailConfig, filesystemsConfig, jwtConfig],
+      load: [appConfig, mailConfig, filesystemsConfig, jwtConfig, appleConfig],
       validationSchema,
     }),
     ServeStaticModule.forRoot({

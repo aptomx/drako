@@ -1,24 +1,30 @@
 import * as Joi from 'joi';
-import { envRules as appEnvRules } from './app/validation.schema';
-import { envRules as mailEnvRules } from './mail/validation.schema';
-import { envRules as filesystemEnvRules } from './filesystem/validation.schema';
-import { envRules as jwtEnvRules } from './jwt/validation.schema';
+import appEnvRules from './app';
+import mailEnvRules from './mail';
+import filesystemEnvRules from './filesystem';
+import jwtEnvRules from './jwt';
+import appleEnvRules from './apple';
 
 const validationSchema = Joi.object({
   //***************************************
   //*APP
   //***************************************
-  ...appEnvRules,
+  ...appEnvRules.envRules,
   //***************************************
   //*MAIL
   //***************************************
-  ...mailEnvRules,
+  ...mailEnvRules.envRules,
   //***************************************
   //*FILESYSTEM
   //***************************************
-  ...filesystemEnvRules,
+  ...filesystemEnvRules.envRules,
   //*JWT
   //***************************************
-  ...jwtEnvRules,
+  ...jwtEnvRules.envRules,
+  //***************************************
+  //*APPLE
+  //***************************************
+  ...appleEnvRules.envRules,
+  //***************************************
 });
 export default validationSchema;
