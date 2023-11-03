@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { LoginSocialNetworkCommand } from '../../infrastructure/commands/login-social-network.command';
 import { IAuthentication } from '../interfaces/authentication.interface';
 import { IGoogle } from '../interfaces/google.interface';
@@ -16,6 +21,10 @@ import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
 import { UserModel } from 'src/modules/users/domain/models/user.model';
 import { DiskService } from 'src/lib/vendor/disk/disk.service';
 import { AuthService } from './auth.service';
+import { IApple } from '../interfaces/apple.interface';
+import appleConfig from 'config/registers/apple.config';
+import { ConfigType } from '@nestjs/config';
+import verifyAppleToken from './apple/verify-apple-id-token';
 
 @Injectable()
 export class SocialNetworkService {
@@ -24,6 +33,8 @@ export class SocialNetworkService {
     private usersService: UsersService,
     private readonly diskService: DiskService,
     private authService: AuthService,
+    @Inject(appleConfig.KEY)
+    private readonly appleConf: ConfigType<typeof appleConfig>,
   ) {}
 
   async registerSocialNetwork(
@@ -47,12 +58,15 @@ export class SocialNetworkService {
 
   async getDataByToken(
     options: LoginSocialNetworkCommand,
-  ): Promise<IGoogle | IFacebook> {
-    let data: IGoogle | IFacebook;
+  ): Promise<IGoogle | IFacebook | IApple> {
+    let data: IGoogle | IFacebook | IApple;
     if (options.driver == DriversSocialNetwork.Facebook) {
       data = await this.getDataByFacebook(options);
-    } else {
+    } else if (options.driver == DriversSocialNetwork.Google) {
       data = await this.getDataByGoogle(options);
+    } else {
+      //options.driver == DriversSocialNetwork.Apple
+      data = await this.getDataByApple(options);
     }
     this.validatePayload(data, options.driver);
     return data;
@@ -88,7 +102,34 @@ export class SocialNetworkService {
     }
   }
 
-  validatePayload(response: IGoogle | IFacebook, driver: string): void {
+  async getDataByApple(options: LoginSocialNetworkCommand): Promise<IApple> {
+    //Valid Apple configuration exists
+    if (!this.appleConf.appleClientId) {
+      throw new NotFoundException(
+        'No se encontró el appleClientId configurado',
+      );
+    }
+    //Valid token, expiration, aud and iss of the signature
+    const jwtClaims = await verifyAppleToken({
+      tokenId: options.token,
+      clientId: this.appleConf.appleClientId,
+    });
+    const { email } = jwtClaims;
+    const firstName = email;
+    const lastName = '';
+
+    return {
+      provider: DriversSocialNetwork.Apple,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+    };
+  }
+
+  validatePayload(
+    response: IGoogle | IFacebook | IApple,
+    driver: string,
+  ): void {
     if (!response.email) {
       throw new BadRequestException(SOCIAL_NETWORK_EMAIL_ERROR(driver));
     }
@@ -96,7 +137,7 @@ export class SocialNetworkService {
 
   async createOrUpdateUser(
     user: IUser,
-    payload: IGoogle | IFacebook,
+    payload: IGoogle | IFacebook | IApple,
     body: LoginSocialNetworkCommand,
   ): Promise<UserModel> {
     let name = null;
@@ -108,6 +149,10 @@ export class SocialNetworkService {
     if (payload.provider === DriversSocialNetwork.Google) {
       name = payload?.given_name;
       lastName = payload?.family_name;
+    }
+    if (payload.provider === DriversSocialNetwork.Apple) {
+      name = payload?.first_name;
+      lastName = payload?.last_name;
     }
     if (body.name) {
       name = body.name;
@@ -125,8 +170,10 @@ export class SocialNetworkService {
         body.token,
       );
     }
-
-    const pictureUrl = await this.savePicture(payload, body.driver);
+    let pictureUrl = null;
+    if (payload.provider !== DriversSocialNetwork.Apple) {
+      pictureUrl = await this.savePicture(payload, body.driver);
+    }
     return await this.usersService.createUserSocialMedia(
       payload.email,
       name,
@@ -141,7 +188,7 @@ export class SocialNetworkService {
     let picture = null;
     if (response.provider === DriversSocialNetwork.Facebook) {
       picture = response.picture.data.url;
-    } else {
+    } else if (response.provider === DriversSocialNetwork.Google) {
       picture = response.picture.replace('s96-c', 's400-c');
     }
     return picture;
