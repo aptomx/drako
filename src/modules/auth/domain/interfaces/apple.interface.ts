@@ -8,7 +8,7 @@ export interface IApple {
   last_name: string;
 }
 
-export interface VerifyAppleIdTokenParams {
+export interface IVerifyAppleIdTokenParams {
   tokenId: string;
   clientId: string | string[];
   nonce?: string;
@@ -18,7 +18,7 @@ export interface VerifyAppleIdTokenParams {
  * The identity token is a JSON Web Token (JWT) and contains the following claims:
  * {@link https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/authenticating_users_with_sign_in_with_apple#3383773}
  */
-export interface VerifyAppleIdTokenResponse extends JwtPayload {
+export interface IVerifyAppleIdTokenResponse extends JwtPayload {
   iss: string;
 
   sub: string;
