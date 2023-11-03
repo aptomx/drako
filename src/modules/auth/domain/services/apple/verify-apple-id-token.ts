@@ -2,8 +2,8 @@ import * as jwt from 'jsonwebtoken';
 import * as jwksClient from 'jwks-rsa';
 import { BadRequestException } from '@nestjs/common';
 import {
-  VerifyAppleIdTokenParams,
-  VerifyAppleIdTokenResponse,
+  IVerifyAppleIdTokenParams,
+  IVerifyAppleIdTokenResponse,
 } from '../../interfaces/apple.interface';
 import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/constants';
 import { DriversSocialNetwork } from '../../enums/drivers-social-network.enum';
@@ -28,8 +28,8 @@ export const getApplePublicKey = async (kid: string): Promise<string> => {
 };
 
 export const verifyAppleToken = async (
-  params: VerifyAppleIdTokenParams,
-): Promise<VerifyAppleIdTokenResponse> => {
+  params: IVerifyAppleIdTokenParams,
+): Promise<IVerifyAppleIdTokenResponse> => {
   //Get and validate token data
   const decoded = jwt.decode(params.tokenId, { complete: true });
   if (!decoded) {
@@ -52,7 +52,7 @@ export const verifyAppleToken = async (
   try {
     jwtClaims = jwt.verify(params.tokenId, applePublicKey, {
       algorithms: [alg as jwt.Algorithm],
-    }) as VerifyAppleIdTokenResponse;
+    }) as IVerifyAppleIdTokenResponse;
   } catch (error) {
     console.log({ error });
     throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(DRIVER));
