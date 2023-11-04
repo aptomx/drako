@@ -3,7 +3,7 @@ import { TodoModel } from '../../domain/models/todo.model';
 import { ITodoDatabaseRepository } from '../../domain/repositories/todo.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TodoEntity } from '../entities/todo.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository, SelectQueryBuilder } from 'typeorm';
 import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
@@ -42,9 +42,10 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
       paginate = DEFAULT_PAGINATE,
     } = query;
 
-    const queryBuilder = this.todoEntityRepository
-      .createQueryBuilder(table)
-      .orderBy(`${table}.${sortType}`, sort);
+    const queryBuilder: SelectQueryBuilder<TodoEntity> =
+      this.todoEntityRepository
+        .createQueryBuilder(table)
+        .orderBy(`${table}.${sortType}`, sort);
 
     if (!isPaginate(paginate)) {
       const list = await queryBuilder.getMany();
@@ -66,9 +67,10 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
   }
 
   async findOne(id: number): Promise<ITodo> {
-    const todoEntity = await this.todoEntityRepository.findOne({
+    const options: FindOneOptions<TodoEntity> = {
       where: { id },
-    });
+    };
+    const todoEntity = await this.todoEntityRepository.findOne(options);
     const response = todoEntity as ITodo;
     return response;
   }
@@ -80,7 +82,7 @@ export class DatabaseTodoRepository implements ITodoDatabaseRepository {
   }
 
   async delete(id: number): Promise<void> {
-    await this.todoEntityRepository.delete(id);
+    await this.todoEntityRepository.softDelete(id);
   }
 
   parseEntityToModel(data: TodoEntity | ITodo): TodoModel {

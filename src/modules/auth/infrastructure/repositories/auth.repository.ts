@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { IAuthDatabaseRepository } from '../../domain/repositories/auth.interface';
 import { RecoveryCodeEntity } from '../entities/recovery-code.entity';
 import { RecoveryCodeModel } from '../../domain/models/recovery-code.model';
@@ -36,7 +36,7 @@ export class DatabaseAuthRepository implements IAuthDatabaseRepository {
     code: string,
     type: RecoveryCodeTypes,
   ): Promise<IRecoveryCode> {
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
+    const options: FindOneOptions<RecoveryCodeEntity> = {
       where: { code, type, user: { email } },
       order: {
         id: Sort.DESC,
@@ -44,26 +44,35 @@ export class DatabaseAuthRepository implements IAuthDatabaseRepository {
       relations: {
         user: true,
       },
-    });
+    };
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
+      options,
+    );
     const response = recoveryCodeEntity as IRecoveryCode;
     return response;
   }
 
   async findRecoveryCodeByToken(token: string): Promise<IRecoveryCode> {
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
+    const options: FindOneOptions<RecoveryCodeEntity> = {
       where: { token },
       relations: {
         user: true,
       },
-    });
+    };
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
+      options,
+    );
     const response = recoveryCodeEntity as IRecoveryCode;
     return response;
   }
 
   async findRecoveryCodeById(id: number): Promise<IRecoveryCode> {
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
+    const options: FindOneOptions<RecoveryCodeEntity> = {
       where: { id },
-    });
+    };
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
+      options,
+    );
     const response = recoveryCodeEntity as IRecoveryCode;
     return response;
   }

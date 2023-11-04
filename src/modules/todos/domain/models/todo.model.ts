@@ -12,18 +12,22 @@ export class TodoModel implements ITodo {
 
   updatedAt: Date;
 
+  deletedAt: Date;
+
   constructor(
     content: string,
     isDone: boolean,
     id?: number,
     createdAt?: Date,
     updatedAt?: Date,
+    deletedAt?: Date,
   ) {
     this.content = content;
     this.isDone = isDone;
     this.id = id;
     this.createdAt = createdAt ? new Date(createdAt) : undefined;
     this.updatedAt = updatedAt ? new Date(updatedAt) : undefined;
+    this.deletedAt = deletedAt ? new Date(deletedAt) : undefined;
   }
 
   isEditable?() {

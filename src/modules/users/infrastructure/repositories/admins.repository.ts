@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IUser } from '../../domain/interfaces/user.interface';
 import { UserEntity } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { IAdminsDatabaseRepository } from '../../domain/repositories/admins.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { FindAdminUsersCommand } from '../commands/admin/find-admin-users.command';
@@ -46,10 +46,11 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
       endDate,
     } = query;
 
-    const queryBuilder = this.usersEntityRepository
-      .createQueryBuilder(table)
-      .leftJoinAndSelect(`${table}.modulePermissions`, 'modulePermissions')
-      .orderBy(`${table}.${sortType}`, sort);
+    const queryBuilder: SelectQueryBuilder<UserEntity> =
+      this.usersEntityRepository
+        .createQueryBuilder(table)
+        .leftJoinAndSelect(`${table}.modulePermissions`, 'modulePermissions')
+        .orderBy(`${table}.${sortType}`, sort);
 
     if (name) {
       const nameClean = name.trim();

@@ -3,7 +3,7 @@ import { IUsersDatabaseRepository } from '../../domain/repositories/users.interf
 import { IUser } from '../../domain/interfaces/user.interface';
 import { UserEntity } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Not, Repository } from 'typeorm';
+import { DataSource, FindOneOptions, Not, Repository } from 'typeorm';
 import { UserModel } from '../../domain/models/user.model';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { UserRoleModel } from '../../domain/models/userRole.model';
@@ -17,34 +17,37 @@ export class DatabaseUsersRepository implements IUsersDatabaseRepository {
   ) {}
 
   async findOne(id: number): Promise<IUser> {
-    const userEntity = await this.usersEntityRepository.findOne({
+    const options: FindOneOptions<UserEntity> = {
       where: { id },
       relations: {
         userRole: true,
       },
-    });
+    };
+    const userEntity = await this.usersEntityRepository.findOne(options);
     const response = userEntity as IUser;
     return response;
   }
 
   async findOneByEmail(email: string): Promise<IUser> {
-    const userEntity = await this.usersEntityRepository.findOne({
+    const options: FindOneOptions<UserEntity> = {
       where: { email },
       relations: {
         userRole: true,
       },
-    });
+    };
+    const userEntity = await this.usersEntityRepository.findOne(options);
     const response = userEntity as IUser;
     return response;
   }
 
   async findOneByEmailNotId(userId: number, email: string): Promise<IUser> {
-    const userEntity = await this.usersEntityRepository.findOne({
+    const options: FindOneOptions<UserEntity> = {
       where: { email, id: Not(userId) },
       relations: {
         userRole: true,
       },
-    });
+    };
+    const userEntity = await this.usersEntityRepository.findOne(options);
     const response = userEntity as IUser;
     return response;
   }
