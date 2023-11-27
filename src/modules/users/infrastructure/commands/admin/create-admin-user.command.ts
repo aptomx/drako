@@ -1,6 +1,15 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumberString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumberString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
 import { EmailCommand } from 'src/lib/commands/email.command';
+import { AdminPermissionsCommand } from './admin-permissions.command';
 
 export class CreateAdminUserCommand extends PickType(EmailCommand, [
   'email',
@@ -31,4 +40,21 @@ export class CreateAdminUserCommand extends PickType(EmailCommand, [
     message: 'El campo teléfono debe contener exactamente 10 dígitos',
   })
   readonly phone: string;
+
+  @ApiProperty()
+  @IsArray({
+    message: 'El campo permisos es un array',
+  })
+  @ArrayMinSize(1, {
+    message: 'El campo permisos es un array de al menos 1 objeto',
+  })
+  @IsNotEmpty({
+    message: 'El campo permisos es requerido',
+  })
+  @ValidateNested({
+    each: true,
+    message: 'El campo permisos debe ser un objeto válido',
+  })
+  @Type(() => AdminPermissionsCommand)
+  readonly permissions: AdminPermissionsCommand[];
 }
