@@ -1,8 +1,16 @@
+import { ModulePermissionsEntity } from './../entities/module-permissions.entity';
+import { ModuleEntity } from './../entities/module.entity';
 import { Injectable } from '@nestjs/common';
 import { IUser } from '../../domain/interfaces/user.interface';
 import { UserEntity } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, DataSource, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  Brackets,
+  DataSource,
+  FindOneOptions,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { IAdminsDatabaseRepository } from '../../domain/repositories/admins.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { FindAdminUsersCommand } from '../commands/admin/find-admin-users.command';
@@ -22,12 +30,17 @@ import { UserRoleModel } from '../../domain/models/userRole.model';
 import { UserRoleEntity } from '../entities/user-role.entity';
 import { formatDateEnd, formatDateStart } from 'src/lib/utils/dates';
 import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
-import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { IModule } from '../../domain/interfaces/module.interface';
+import { ModulePermissionsModel } from '../../domain/models/module-permissions.model';
 @Injectable()
 export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersEntityRepository: Repository<UserEntity>,
+    @InjectRepository(ModuleEntity)
+    private readonly modulesEntityRepository: Repository<ModuleEntity>,
+    @InjectRepository(ModulePermissionsEntity)
+    private readonly modulePermissionsEntityRepository: Repository<ModulePermissionsEntity>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -100,7 +113,11 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
     return response;
   }
 
-  async create(data: UserModel, roleId: UserRoles): Promise<UserModel> {
+  async create(
+    data: UserModel,
+    roleId: UserRoles,
+    permissions: ModulePermissionsModel[],
+  ): Promise<UserModel> {
     let userEntity;
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -108,6 +125,14 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
 
       const userRole = new UserRoleModel(roleId, userEntity.id);
       await transactionalEntityManager.save(UserRoleEntity, userRole);
+
+      permissions.forEach((p) => {
+        p.userId = userEntity.id;
+      });
+      await transactionalEntityManager.save(
+        ModulePermissionsEntity,
+        permissions,
+      );
     });
 
     return userEntity
@@ -115,8 +140,19 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
       : (userEntity as UserEntity);
   }
 
-  async update(id: number, data: UserModel): Promise<UserModel> {
+  async update(
+    id: number,
+    data: UserModel,
+    permissions?: ModulePermissionsModel[],
+  ): Promise<UserModel> {
     data.setUpdatedAt();
+    if (permissions) {
+      await this.modulePermissionsEntityRepository.delete({ userId: id });
+      permissions.forEach((p) => {
+        p.userId = id;
+      });
+      await this.modulePermissionsEntityRepository.save(permissions);
+    }
     await this.usersEntityRepository.update(id, data);
     return data;
   }
@@ -132,6 +168,15 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
       });
       await transactionalEntityManager.delete(UserEntity, id);
     });
+  }
+
+  async findOneModulePermission(id: number): Promise<IModule> {
+    const options: FindOneOptions<ModuleEntity> = {
+      where: { id: id },
+    };
+    const moduleEntity = await this.modulesEntityRepository.findOne(options);
+    const response = moduleEntity as IModule;
+    return response;
   }
 
   parseEntityToModel(data: UserEntity | IUser): UserModel {

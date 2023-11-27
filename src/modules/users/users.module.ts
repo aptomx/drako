@@ -11,10 +11,16 @@ import { UsersService } from './domain/services/users.service';
 import { AdminsService } from './domain/services/admins.service';
 import { AuthModule } from '../auth/auth.module';
 import { AdminUsersController } from './infrastructure/controllers/admin/admin-users.controller';
+import { ModuleEntity } from './infrastructure/entities/module.entity';
+import { ModulePermissionsEntity } from './infrastructure/entities/module-permissions.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      ModuleEntity,
+      ModulePermissionsEntity,
+    ]),
     AuthModule,
     MailModule,
     DiskModule,

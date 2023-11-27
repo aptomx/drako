@@ -7,4 +7,5 @@ export class UpdateAdminUserCommand extends PickType(CreateAdminUserCommand, [
   'lastName',
   'email',
   'phone',
+  'permissions',
 ] as const) {}
