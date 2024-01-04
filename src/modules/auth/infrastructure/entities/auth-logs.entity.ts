@@ -1,39 +1,53 @@
-import {
-  CreateDateColumn,
-  Entity,
-  Column,
-  UpdateDateColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { IAuthLog } from '../../domain/interfaces/auth-logs.interface';
 import { AuthLogStatus } from '../../domain/enums/auth-log-status.enum';
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript';
+import { IAuthLog } from '../../domain/interfaces/auth-logs.interface';
 
-@Entity('auth_logs')
-export class AuthLogsEntity implements IAuthLog {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'auth_logs' })
+export class AuthLogsEntity extends Model<IAuthLog> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   ip: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   userAgent: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  status: AuthLogStatus;
+  @Column({
+    type: DataType.ENUM(...Object.values(AuthLogStatus)),
+  })
+  status: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   error: string;
 
-  @CreateDateColumn()
-  timestamp: Date;
-
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
 }

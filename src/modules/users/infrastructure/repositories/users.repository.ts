@@ -2,90 +2,93 @@ import { Injectable } from '@nestjs/common';
 import { IUsersDatabaseRepository } from '../../domain/repositories/users.interface';
 import { IUser } from '../../domain/interfaces/user.interface';
 import { UserEntity } from '../entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Not, Repository } from 'typeorm';
 import { UserModel } from '../../domain/models/user.model';
-import { UserRoles } from 'src/lib/enums/user-roles.enum';
-import { UserRoleModel } from '../../domain/models/userRole.model';
 import { UserRoleEntity } from '../entities/user-role.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { IRole } from '../../domain/interfaces/role.interface';
+import { RoleEntity } from '../entities/role.entity';
+import { UserRoleModel } from '../../domain/models/userRole.model';
+import { Sequelize } from 'sequelize-typescript';
 @Injectable()
 export class DatabaseUsersRepository implements IUsersDatabaseRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly usersEntityRepository: Repository<UserEntity>,
-    private readonly dataSource: DataSource,
+    @InjectModel(UserEntity)
+    private readonly usersEntityRepository: typeof UserEntity,
+    @InjectModel(UserRoleEntity)
+    private readonly userRoleEntityRepository: typeof UserRoleEntity,
+    @InjectModel(RoleEntity)
+    private readonly roleEntityRepository: typeof RoleEntity,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findOne(id: number): Promise<IUser> {
     const userEntity = await this.usersEntityRepository.findOne({
       where: { id },
-      relations: {
-        userRole: true,
-      },
+      include: [
+        {
+          model: this.userRoleEntityRepository,
+        },
+      ],
     });
-    const response = userEntity as IUser;
-    return response;
+    return userEntity as IUser;
   }
 
   async findOneByEmail(email: string): Promise<IUser> {
     const userEntity = await this.usersEntityRepository.findOne({
       where: { email },
-      relations: {
-        userRole: true,
-      },
+      include: [
+        {
+          model: this.userRoleEntityRepository,
+          include: [
+            {
+              model: this.roleEntityRepository,
+            },
+          ],
+        },
+      ],
     });
-    const response = userEntity as IUser;
-    return response;
+    return userEntity as IUser;
   }
 
   async findOneByEmailNotId(userId: number, email: string): Promise<IUser> {
     const userEntity = await this.usersEntityRepository.findOne({
-      where: { email, id: Not(userId) },
-      relations: {
-        userRole: true,
-      },
+      where: { email, id: { [Op.not]: userId } },
+      include: [
+        {
+          model: this.userRoleEntityRepository,
+        },
+      ],
     });
-    const response = userEntity as IUser;
-    return response;
+    return userEntity as IUser;
   }
 
-  async create(data: UserModel, roleId: UserRoles): Promise<UserModel> {
+  async create(data: UserModel, roleId: number): Promise<IUser> {
     let userEntity;
 
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      userEntity = await transactionalEntityManager.save(UserEntity, data);
+    await this.sequelize.transaction(async (t) => {
+      userEntity = await this.usersEntityRepository.create(data, {
+        transaction: t,
+      });
 
       const userRole = new UserRoleModel(roleId, userEntity.id);
-      await transactionalEntityManager.save(UserRoleEntity, userRole);
+      await this.userRoleEntityRepository.create(userRole, { transaction: t });
     });
 
-    return userEntity
-      ? this.parseEntityToModel(userEntity)
-      : (userEntity as UserEntity);
+    return userEntity as IUser;
   }
 
-  async update(id: number, data: UserModel): Promise<UserModel> {
+  async update(id: number, data: UserModel): Promise<IUser> {
     data.setUpdatedAt();
-    await this.usersEntityRepository.update(id, data);
-    return data;
+    await this.usersEntityRepository.update(data, { where: { id } });
+    return data as IUser;
   }
 
-  parseEntityToModel(data: UserEntity | IUser): UserModel {
-    const user = new UserModel(
-      data.email,
-      data.firstName,
-      data.lastName,
-      data.isActive,
-      data.emailVerified,
-      data.password,
-      data.photo,
-      data.phone,
-      data.driver,
-      data.token,
-      data.id,
-      data.createdAt,
-      data.updatedAt,
-    );
-    return user;
+  async findRole(roleName: string): Promise<IRole> {
+    const role = await this.roleEntityRepository.findOne({
+      where: { name: roleName },
+    });
+
+    return role as IRole;
   }
 }

@@ -1,38 +1,47 @@
-import {
-  CreateDateColumn,
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
-import { IUserRole } from '../../domain/interfaces/user-role.interface';
 import { UserEntity } from './user.entity';
 import { RoleEntity } from './role.entity';
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript';
+import { IUserRole } from '../../domain/interfaces/user-role.interface';
 
-@Entity('user_roles')
-export class UserRoleEntity implements IUserRole {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'user_roles' })
+export class UserRoleEntity extends Model<IUserRole> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column({ type: 'integer' })
+  @ForeignKey(() => UserEntity)
+  @Column({
+    type: DataType.INTEGER,
+  })
   userId: number;
 
-  @Column({ type: 'integer' })
+  @ForeignKey(() => RoleEntity)
+  @Column({
+    type: DataType.INTEGER,
+  })
   roleId: number;
 
-  @OneToOne(() => UserEntity, (user) => user.userRole)
-  @JoinColumn()
+  @BelongsTo(() => UserEntity)
   user: UserEntity;
 
-  @ManyToOne(() => RoleEntity, (role) => role.userRoles)
+  @BelongsTo(() => RoleEntity)
   role: RoleEntity;
 
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
 }

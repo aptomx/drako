@@ -23,7 +23,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateAdminUserCommand } from '../../commands/admin/create-admin-user.command';
-import { UserModel } from 'src/modules/users/domain/models/user.model';
 import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
 import { UpdateAdminUserCommand } from '../../commands/admin/update-admin-user.command';
 import { FindAdminUsersCommand } from '../../commands/admin/find-admin-users.command';
@@ -52,7 +51,7 @@ export class AdminUsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoles.Admin)
   @Post()
-  async create(@Body() body: CreateAdminUserCommand): Promise<UserModel> {
+  async create(@Body() body: CreateAdminUserCommand): Promise<IUser> {
     return await this.adminsService.create(body);
   }
 
@@ -83,7 +82,7 @@ export class AdminUsersController {
   async update(
     @Param('id') id: number,
     @Body() body: UpdateAdminUserCommand,
-  ): Promise<UserModel> {
+  ): Promise<IUser> {
     return await this.adminsService.update(id, body);
   }
 
@@ -102,7 +101,7 @@ export class AdminUsersController {
   async updatePicture(
     @Param('id') id: number,
     @UploadedFile(BasicFileValidationPipe) file: Express.Multer.File,
-  ): Promise<UserModel> {
+  ): Promise<IUser> {
     return await this.adminsService.updatePicture(id, file);
   }
 

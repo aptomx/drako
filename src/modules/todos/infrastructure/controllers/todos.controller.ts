@@ -24,7 +24,6 @@ import { TodoUpdateCommand } from '../commands/todo-update.command';
 import { TodoSearchCommand } from '../commands/todo-search.command';
 import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { TodoModel } from '../../domain/models/todo.model';
 
 @Controller(`${BASE_PREFIX_API}/todos`)
 export class TodosController {
@@ -38,7 +37,7 @@ export class TodosController {
     description: 'Return new register',
   })
   @Post()
-  async create(@Body() data: TodoCommand): Promise<TodoModel> {
+  async create(@Body() data: TodoCommand): Promise<ITodo> {
     return await this.todosService.create(data);
   }
 
@@ -79,7 +78,7 @@ export class TodosController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: TodoUpdateCommand,
-  ): Promise<TodoModel> {
+  ): Promise<ITodo> {
     await this.todosService.findOne(id);
     return await this.todosService.update(id, data.isDone);
   }

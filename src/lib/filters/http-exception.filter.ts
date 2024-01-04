@@ -14,8 +14,8 @@ import {
 } from '../utils/errors.util';
 import { LoggerReportingService } from '../vendor/loggerReporting/loggerReporting.service';
 import { BaseError } from '../errors/base-error';
-import { TypeORMError } from 'typeorm';
 import { LoggerService } from '../vendor/logger/logger.service';
+import { BaseError as SequelizeError } from 'sequelize';
 
 @Catch() // Capture all exceptions
 export class HttpFilterException implements ExceptionFilter {
@@ -42,7 +42,7 @@ export class HttpFilterException implements ExceptionFilter {
       customResponse.errorCodeName = getCode(exception.getResponse());
       customResponse.message = getErrorMessage(exception.getResponse());
       status = exception.getStatus();
-    } else if (exception instanceof TypeORMError) {
+    } else if (exception instanceof SequelizeError) {
       customResponse.errorCodeName = formatErrorCode(exception.name);
       customResponse.message = exception.message;
       status = HttpStatus.INTERNAL_SERVER_ERROR;

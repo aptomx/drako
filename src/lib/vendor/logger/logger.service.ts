@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as winston from 'winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
-import dataSource from '../../../../config/database/connectors/typeorm.connector';
-import { AuthLogsEntity } from '../../../modules/auth/infrastructure/entities/auth-logs.entity';
+import sequelize from '../../../../config/database/connectors/sequelize.connector';
 import { IAuthLogMessage } from './interfaces/auth-log-message.interface';
 
 @Injectable()
@@ -43,7 +42,7 @@ export class LoggerService {
     this.logger.log('info', message);
 
     try {
-      await dataSource.getRepository(AuthLogsEntity).save(message);
+      await sequelize.models.auth_logs.create({ ...message });
     } catch (error) {
       console.log(error);
     }
