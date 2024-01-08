@@ -1,4 +1,4 @@
-import { DriversSocialNetwork } from "../enums/drivers-social-network.enum";
+import { DriversSocialNetwork } from '../enums/drivers-social-network.enum';
 
 export interface IFacebook {
   provider: DriversSocialNetwork.Facebook;

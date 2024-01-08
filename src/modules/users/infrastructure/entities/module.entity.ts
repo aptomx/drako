@@ -1,31 +1,35 @@
-import { IModule } from '../../domain/interfaces/module.interface';
-import {
-  CreateDateColumn,
-  Entity,
-  Column,
-  UpdateDateColumn,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
 import { ModulePermissionsEntity } from './module-permissions.entity';
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript';
+import { IModule } from '../../domain/interfaces/module.interface';
 
-@Entity('modules')
-export class ModuleEntity implements IModule {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'modules' })
+export class ModuleEntity extends Model<IModule> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   name: string;
 
-  @OneToMany(
-    () => ModulePermissionsEntity,
-    (modulePermission) => modulePermission.module,
-  )
+  @HasMany(() => ModulePermissionsEntity)
   modulePermissions: ModulePermissionsEntity[];
 
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
 }

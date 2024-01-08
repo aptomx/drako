@@ -1,41 +1,59 @@
-import {
-  CreateDateColumn,
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  ManyToOne,
-} from 'typeorm';
-import { IModulePermission } from '../../domain/interfaces/module-permission.interface';
 import { UserEntity } from './user.entity';
 import { ModuleEntity } from './module.entity';
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript';
+import { IModulePermission } from '../../domain/interfaces/module-permission.interface';
 
-@Entity('module_permissions')
-export class ModulePermissionsEntity implements IModulePermission {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'module_permissions' })
+export class ModulePermissionsEntity extends Model<IModulePermission> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column({ type: 'integer' })
+  @ForeignKey(() => UserEntity)
+  @Column({
+    type: DataType.INTEGER,
+  })
   userId: number;
 
-  @Column({ type: 'integer' })
+  @ForeignKey(() => ModuleEntity)
+  @Column({
+    type: DataType.INTEGER,
+  })
   moduleId: number;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
   view: boolean;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
   edit: boolean;
 
-  @ManyToOne(() => UserEntity, (user) => user.modulePermissions)
+  @BelongsTo(() => UserEntity)
   user: UserEntity;
 
-  @ManyToOne(() => ModuleEntity, (module) => module.modulePermissions)
+  @BelongsTo(() => ModuleEntity)
   module: ModuleEntity;
 
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
 }

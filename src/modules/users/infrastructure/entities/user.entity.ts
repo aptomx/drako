@@ -1,73 +1,107 @@
-import { IUser } from '../../domain/interfaces/user.interface';
-import {
-  CreateDateColumn,
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToOne,
-  OneToMany,
-} from 'typeorm';
 import { ModulePermissionsEntity } from './module-permissions.entity';
 import { UserRoleEntity } from './user-role.entity';
 import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
+import {
+  DataType,
+  Model,
+  Table,
+  Column,
+  HasOne,
+  CreatedAt,
+  UpdatedAt,
+  HasMany,
+} from 'sequelize-typescript';
+import { IUser } from '../../domain/interfaces/user.interface';
 
-@Entity('users')
-export class UserEntity implements IUser {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'users' })
+export class UserEntity extends Model<IUser> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column({ type: 'varchar', generated: 'uuid', unique: true })
+  @Column({
+    type: DataType.UUID,
+    unique: true,
+    defaultValue: DataType.UUIDV4,
+  })
   uuid: string;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
+  @Column({
+    type: DataType.STRING,
+    unique: true,
+  })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   password: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   firstName: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: DataType.STRING,
+  })
   fullName: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   phone: string;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({
+    type: DataType.BOOLEAN,
+  })
   isActive: boolean;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({
+    type: DataType.BOOLEAN,
+  })
   emailVerified: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   photo: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   driver: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   token: string;
 
-  @OneToOne(() => UserRoleEntity, (userRole) => userRole.user)
+  @HasOne(() => UserRoleEntity)
   userRole: UserRoleEntity;
 
-  @OneToMany(
-    () => ModulePermissionsEntity,
-    (modulePermission) => modulePermission.user,
-  )
+  @HasMany(() => ModulePermissionsEntity)
   modulePermissions: ModulePermissionsEntity[];
 
-  @OneToMany(() => RecoveryCodeEntity, (recoveryCode) => recoveryCode.user)
+  @HasMany(() => RecoveryCodeEntity)
   recoveryCodes: RecoveryCodeEntity[];
 
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
 }

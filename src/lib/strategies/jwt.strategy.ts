@@ -1,11 +1,12 @@
 import { ConfigType } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UsersService } from '../../modules/users/domain/services/users.service';
 import jwtConfig from 'config/registers/jwt.config';
 import { IVerifyToken } from 'src/modules/auth/domain/interfaces/verify-token.interface';
 import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
+import { AuthInvalidTokenError } from '../../modules/auth/errors/auth-invalid-token-error';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -25,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.usersService.findOneByEmail(payload.email);
 
     if (!user) {
-      throw new UnauthorizedException(
+      throw new AuthInvalidTokenError(
         'El token no es válido, inicie sesión para continuar',
       );
     }

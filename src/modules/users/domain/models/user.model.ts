@@ -1,7 +1,7 @@
 import { IUser } from '../interfaces/user.interface';
 
 export class UserModel implements IUser {
-  id: number;
+  id?: number;
 
   uuid: string;
 

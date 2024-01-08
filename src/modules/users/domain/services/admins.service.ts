@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IUsersDatabaseRepository } from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
@@ -25,6 +20,8 @@ import { AuthService } from 'src/modules/auth/domain/services/auth.service';
 import { MailService } from 'src/lib/vendor/mail/mail.service';
 import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
 import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
+import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
+
 @Injectable()
 export class AdminsService {
   constructor(
@@ -41,15 +38,16 @@ export class AdminsService {
   async findAll(
     query: FindAdminUsersCommand,
   ): Promise<IUser[] | IPagination<IUser>> {
-    const users = await this.adminDatabaseRepository.findAll(query);
-    return users;
+    return await this.adminDatabaseRepository.findAll(query);
   }
 
-  async create(data: CreateAdminUserCommand): Promise<UserModel> {
+  async create(data: CreateAdminUserCommand): Promise<IUser> {
     const existingUser = await this.usersService.findOneByEmail(data.email);
 
     if (existingUser) {
-      throw new ConflictException('Ya existe un usuario con este email');
+      throw new UserAlreadyExistsError(
+        'Ya existe un usuario registrado con el mismo email',
+      );
     }
 
     const password = getRandomAlphanumeric();
@@ -91,21 +89,23 @@ export class AdminsService {
       'Verifica tu email',
     );
 
+    const createdUserM = this.parseEntityToModel(createdUser);
     //TODO:Añadir modulos
-    return createdUser.hidePassword();
+    createdUserM.hidePassword();
+
+    return createdUserM as IUser;
   }
 
-  async update(id: number, data: UpdateAdminUserCommand): Promise<UserModel> {
+  async update(id: number, data: UpdateAdminUserCommand): Promise<IUser> {
     const existingUser = await this.usersService.findOne(id);
 
     const verifyEmail = await this.usersDatabaseRepository.findOneByEmailNotId(
       existingUser.id,
       data.email,
     );
-    if (verifyEmail) throw new InternalServerErrorException(ERROR_USER_EXIST);
+    if (verifyEmail) throw new UserAlreadyExistsError(ERROR_USER_EXIST);
 
-    let existingUserM =
-      this.adminDatabaseRepository.parseEntityToModel(existingUser);
+    let existingUserM = this.parseEntityToModel(existingUser);
     if (data.email != existingUserM.email) {
       existingUserM = await this.usersService.updateEmailVerified(
         existingUser.id,
@@ -137,12 +137,10 @@ export class AdminsService {
       data.lastName,
       data.phone,
     );
+    await this.adminDatabaseRepository.update(existingUser.id, existingUserM);
+    existingUserM.hidePassword();
 
-    const updatedUser = await this.adminDatabaseRepository.update(
-      existingUser.id,
-      existingUserM,
-    );
-    return updatedUser.hidePassword();
+    return existingUserM as IUser;
   }
 
   async delete(id: number): Promise<void> {
@@ -150,22 +148,35 @@ export class AdminsService {
     await this.adminDatabaseRepository.delete(id);
   }
 
-  async updatePicture(
-    id: number,
-    file: Express.Multer.File,
-  ): Promise<UserModel> {
+  async updatePicture(id: number, file: Express.Multer.File): Promise<IUser> {
     const existingUser = await this.usersService.findOne(id);
-    const existingUserM =
-      this.adminDatabaseRepository.parseEntityToModel(existingUser);
+    const existingUserM = this.parseEntityToModel(existingUser);
 
     const result = await this.diskService.uploadDisk(file, 'userPicture');
 
     existingUserM.updateUserPicture(result.url);
+    await this.adminDatabaseRepository.update(id, existingUserM);
 
-    const updatedUser = await this.adminDatabaseRepository.update(
-      id,
-      existingUserM,
+    existingUserM.hidePassword();
+
+    return existingUserM as IUser;
+  }
+
+  private parseEntityToModel(data: IUser): UserModel {
+    return new UserModel(
+      data.email,
+      data.firstName,
+      data.lastName,
+      data.isActive,
+      data.emailVerified,
+      data.password,
+      data.photo,
+      data.phone,
+      data.driver,
+      data.token,
+      data.id,
+      data.createdAt,
+      data.updatedAt,
     );
-    return updatedUser.hidePassword();
   }
 }

@@ -15,8 +15,10 @@ import {
   MAIL_USERNAME,
 } from 'config/magicVariables';
 import { MailDrivers } from 'config/enums/mail.enum';
+import { LoggerReportingModule } from '../loggerReporting/loggerReporting.module';
 
 @Module({
+  imports: [LoggerReportingModule],
   providers: [
     {
       provide: 'TRANSPORT_EMAIL',
