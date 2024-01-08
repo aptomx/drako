@@ -5,7 +5,7 @@ import {
   DATABASE_USER,
   DATABASE_PASSWORD,
   DATABASE_NAME,
-  DATABASE_TYPE,
+  DATABASE_DIALECT,
 } from '../magicVariables';
 
 export default registerAs('database', () => ({
@@ -14,5 +14,5 @@ export default registerAs('database', () => ({
   databaseUser: process.env[DATABASE_USER],
   databasePassword: process.env[DATABASE_PASSWORD],
   databaseName: process.env[DATABASE_NAME],
-  databaseType: process.env[DATABASE_TYPE],
+  databaseDialect: process.env[DATABASE_DIALECT],
 }));

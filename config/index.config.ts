@@ -4,6 +4,7 @@ import mailEnvRules from './mail';
 import filesystemEnvRules from './filesystem';
 import jwtEnvRules from './jwt';
 import appleEnvRules from './apple';
+import loggerReportingEnvRules from './loggerReporting';
 
 const validationSchema = Joi.object({
   //***************************************
@@ -25,6 +26,8 @@ const validationSchema = Joi.object({
   //*APPLE
   //***************************************
   ...appleEnvRules.envRules,
+  //*LOGGER REPORTING
   //***************************************
+  ...loggerReportingEnvRules.envRules,
 });
 export default validationSchema;

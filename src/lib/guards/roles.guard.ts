@@ -21,8 +21,8 @@ export class RolesGuard implements CanActivate {
 
     let access = false;
 
-    requiredRoles.map((rolId) => {
-      const search = user.userRole.roleId === rolId;
+    requiredRoles.map((roleId) => {
+      const search = user.userRole.roleId === roleId;
 
       if (search) {
         access = true;
