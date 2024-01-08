@@ -4,7 +4,7 @@ import databaseConfig from 'config/registers/database.config';
 import * as Joi from 'joi';
 import { envRules as databaseEnvRule } from 'config/database/validation.schema';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { DatabaseService } from './database.service';
+import { SequelizeService } from './sequelize.service';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { DatabaseService } from './database.service';
         //***************************************
       }),
     }),
-    SequelizeModule.forRootAsync({ useClass: DatabaseService }),
+    SequelizeModule.forRootAsync({ useClass: SequelizeService }),
   ],
 })
 export class DatabaseModule {}

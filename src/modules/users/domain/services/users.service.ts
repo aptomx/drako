@@ -81,8 +81,7 @@ export class UsersService {
     newUser.driver = driver;
     newUser.token = token;
 
-    const clientRole = await this.findRole(UserRoles.Client);
-    await this.usersDatabaseRepository.create(newUser, clientRole.id);
+    await this.usersDatabaseRepository.create(newUser, UserRoles.Client);
 
     await this.mailService.sendMail(
       'welcomeSocialNetwork',

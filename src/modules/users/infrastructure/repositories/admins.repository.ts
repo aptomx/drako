@@ -24,9 +24,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Op } from 'sequelize';
 import {
-  customLike,
-  customLikeNumber,
-} from '../../../../lib/utils/custom-sequelize';
+  conditionLike,
+  conditionLikeNumber,
+} from '../../../../lib/utils/sequelize/conditions-sequelize';
 
 @Injectable()
 export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
@@ -62,8 +62,8 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
       queryWhere = {
         ...queryWhere,
         [Op.or]: [
-          { fullName: customLike('fullName', name) },
-          { id: customLikeNumber('id', name) },
+          { fullName: conditionLike('fullName', name) },
+          { id: conditionLikeNumber('id', name) },
         ],
       };
     }

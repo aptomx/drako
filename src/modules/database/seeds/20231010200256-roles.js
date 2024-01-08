@@ -7,11 +7,13 @@ module.exports = {
       'roles',
       [
         {
+          id: 1,
           name: 'Admin',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
+          id: 2,
           name: 'Client',
           createdAt: new Date(),
           updatedAt: new Date(),

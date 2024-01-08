@@ -57,11 +57,9 @@ export class AdminsService {
     newUser.password = hashedPassword;
     newUser.phone = data.phone;
 
-    const adminRole = await this.usersService.findRole(UserRoles.Admin);
-
     const createdUser = await this.adminDatabaseRepository.create(
       newUser,
-      adminRole.id,
+      UserRoles.Admin,
     );
     const code = getRandomNumeric(6);
     const token = await this.authService.generateTokenByUser(createdUser);

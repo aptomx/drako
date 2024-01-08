@@ -64,7 +64,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async signTokenToRecoverPassword(user: UserModel): Promise<string> {
+  signTokenToRecoverPassword(user: UserModel): string {
     const payload = { email: user.email, sub: user.uuid, id: user.id };
     return this.jwtService.sign(payload, {
       expiresIn: this.config.jwtExpirationTimeRecoverPassword,

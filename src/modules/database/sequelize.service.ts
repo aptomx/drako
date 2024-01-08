@@ -16,7 +16,7 @@ import {
 import { Dialect } from 'sequelize/types/sequelize';
 
 @Injectable()
-export class DatabaseService implements SequelizeOptionsFactory {
+export class SequelizeService implements SequelizeOptionsFactory {
   getDatabaseHost(): string {
     return this.config.get<string>(DATABASE_HOST);
   }
@@ -57,7 +57,6 @@ export class DatabaseService implements SequelizeOptionsFactory {
       password: this.getDatabasePassword(),
       database: this.getDatabaseName(),
       autoLoadModels: true,
-      synchronize: true,
     };
   }
 }
