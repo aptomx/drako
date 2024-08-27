@@ -12,10 +12,6 @@ import { DriversSocialNetwork } from '../enums/drivers-social-network.enum';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
-import {
-  SOCIAL_NETWORK_EMAIL_ERROR,
-  SOCIAL_NETWORK_TOKEN_ERROR,
-} from 'config/constants';
 import { UsersService } from 'src/modules/users/domain/services/users.service';
 import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
 import { UserModel } from 'src/modules/users/domain/models/user.model';
@@ -25,6 +21,10 @@ import { IApple } from '../interfaces/apple.interface';
 import appleConfig from 'config/registers/apple.config';
 import { ConfigType } from '@nestjs/config';
 import verifyAppleToken from './apple/verify-apple-id-token';
+import {
+  SOCIAL_NETWORK_EMAIL_ERROR,
+  SOCIAL_NETWORK_TOKEN_ERROR,
+} from 'config/messageResponses';
 
 @Injectable()
 export class SocialNetworkService {

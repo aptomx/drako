@@ -1,4 +1,4 @@
-export enum Drivers {
+export enum DatabaseDialects {
   mysql = 'mysql',
   postgres = 'postgres',
 }

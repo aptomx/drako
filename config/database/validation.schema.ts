@@ -4,8 +4,8 @@ import {
   DATABASE_NAME,
   DATABASE_PASSWORD,
   DATABASE_PORT,
-  DATABASE_TYPE,
   DATABASE_USER,
+  DATABASE_DIALECT,
 } from 'config/magicVariables';
 
 export const envRules = {
@@ -14,5 +14,5 @@ export const envRules = {
   [DATABASE_USER]: Joi.string().required(),
   [DATABASE_PASSWORD]: Joi.string().required(),
   [DATABASE_NAME]: Joi.string().required(),
-  [DATABASE_TYPE]: Joi.string().required(),
+  [DATABASE_DIALECT]: Joi.string().required(),
 };

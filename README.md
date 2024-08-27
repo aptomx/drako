@@ -36,16 +36,18 @@ npm install
 - Ejecutar desde consola:
 
 ```bash
-  - npm run migration:generate name # Crea migraciones por un nombre dado
-  - npm run migration:run # Corre las migraciones pendientes encontradas
-  - npm run migration:revert # Hace un rollback de las últimas migraciones ejecutadas
+  - npx sequelize-cli migration:generate --name migrations_name # Crea un archivo en blanco para configurar la migración
+  - npx sequelize-cli db:migrate # Corre las migraciones pendientes encontradas
+  - npx sequelize-cli db:migrate:undo # Hace un rollback de la ultima migración
+  - npx sequelize-cli db:migrate:undo:all # Hace un rollback de las migraciones
 ```
 
 - Nota:
 
 ```
-  	Los archivos de migraciones se crean con errores de linter, por lo cual es
-    necesario dirigirse a ellos y aplicarles el formato correcto (ctrl + s).
+  	Los archivos de migraciones se crean con dos metodos lo cuales se tienen que llenar:
+  	- up: Los cambios a realizar en la base de datos
+  	- down: Los cambios a realizar cuando se haga un rollback
 ```
 
 ## Seeders
@@ -53,7 +55,12 @@ npm install
 - Ejecutar desde consola:
 
 ```bash
-- npm run seed
+- npx sequelize-cli seed:generate --name demo-user # Crea un archivo seed
+- npx sequelize-cli db:seed:all # Corre todos los seeds
+- npx sequelize-cli db:seed --seed name-of-seed # Corre un seed especifico
+- npx sequelize-cli db:seed:undo # Rollback al ultimo seed
+- npx sequelize-cli db:seed:undo --seed name-of-seed-as-in-data # Rollback a un seed en especifico
+- npx sequelize-cli db:seed:undo:all # Rollback todos los seeds
 ```
 
 ## Ejecutar aplicación

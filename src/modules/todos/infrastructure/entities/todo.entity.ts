@@ -1,30 +1,37 @@
-import { ITodo } from './../../domain/interfaces/todos.interface';
+import { ITodo } from '../../domain/interfaces/todos.interface';
 import {
-  Entity,
+  Table,
   Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from 'typeorm';
+  CreatedAt,
+  UpdatedAt,
+  DataType,
+  Model,
+} from 'sequelize-typescript';
 
-@Entity('todo')
-export class TodoEntity implements ITodo {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+@Table({ modelName: 'todos' })
+export class TodoEntity extends Model<ITodo> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   id: number;
 
-  @Column('varchar', { length: 255, nullable: true })
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   content: string;
 
-  @Column('boolean', { default: false })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
   isDone: boolean;
 
-  @CreateDateColumn()
+  @CreatedAt
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdatedAt
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

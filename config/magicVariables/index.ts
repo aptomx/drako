@@ -1,7 +1,7 @@
 export const BASE_PREFIX_API = 'api';
 
 export const APP_NAME = 'APP_NAME';
-export const APP_PORT = 'APP_PORT';
+export const APP_PORT = 'PORT';
 export const APP_URL = 'APP_URL';
 
 export const DATABASE_HOST = 'DATABASE_HOST';
@@ -9,7 +9,7 @@ export const DATABASE_PORT = 'DATABASE_PORT';
 export const DATABASE_USER = 'DATABASE_USER';
 export const DATABASE_PASSWORD = 'DATABASE_PASSWORD';
 export const DATABASE_NAME = 'DATABASE_NAME';
-export const DATABASE_TYPE = 'DATABASE_TYPE';
+export const DATABASE_DIALECT = 'DATABASE_DIALECT';
 
 export const MAIL_DRIVER = 'MAIL_DRIVER';
 export const MAIL_FROM_NAME = 'MAIL_FROM_NAME';
@@ -36,3 +36,6 @@ export const JWT_EXPIRATION_TIME_RECOVER_PASSWORD =
   'JWT_EXPIRATION_TIME_RECOVER_PASSWORD';
 
 export const APPLE_CLIENT_ID = 'APPLE_CLIENT_ID';
+
+export const SENTRY_DNS = 'SENTRY_DNS';
+export const SENTRY_ENVIRONMENT = 'SENTRY_ENVIRONMENT';

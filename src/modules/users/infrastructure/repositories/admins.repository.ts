@@ -1,16 +1,6 @@
-import { ModulePermissionsEntity } from './../entities/module-permissions.entity';
-import { ModuleEntity } from './../entities/module.entity';
 import { Injectable } from '@nestjs/common';
 import { IUser } from '../../domain/interfaces/user.interface';
 import { UserEntity } from '../entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Brackets,
-  DataSource,
-  FindOneOptions,
-  Repository,
-  SelectQueryBuilder,
-} from 'typeorm';
 import { IAdminsDatabaseRepository } from '../../domain/repositories/admins.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { FindAdminUsersCommand } from '../commands/admin/find-admin-users.command';
@@ -25,29 +15,36 @@ import isPaginate from 'src/lib/utils/is-paginate';
 import getSkip from 'src/lib/utils/calculate-skip-pagination';
 import getTotalPages from 'src/lib/utils/calculate-total-pages';
 import { UserModel } from '../../domain/models/user.model';
-import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { UserRoleModel } from '../../domain/models/userRole.model';
 import { UserRoleEntity } from '../entities/user-role.entity';
 import { formatDateEnd, formatDateStart } from 'src/lib/utils/dates';
 import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
-import { IModule } from '../../domain/interfaces/module.interface';
-import { ModulePermissionsModel } from '../../domain/models/module-permissions.model';
+import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
+import {
+  conditionLike,
+  conditionLikeNumber,
+} from '../../../../lib/utils/sequelize/conditions-sequelize';
+
 @Injectable()
 export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly usersEntityRepository: Repository<UserEntity>,
-    @InjectRepository(ModuleEntity)
-    private readonly modulesEntityRepository: Repository<ModuleEntity>,
-    @InjectRepository(ModulePermissionsEntity)
-    private readonly modulePermissionsEntityRepository: Repository<ModulePermissionsEntity>,
-    private readonly dataSource: DataSource,
+    @InjectModel(UserEntity)
+    private readonly usersEntityRepository: typeof UserEntity,
+    @InjectModel(UserRoleEntity)
+    private readonly userRoleEntityRepository: typeof UserRoleEntity,
+    @InjectModel(RecoveryCodeEntity)
+    private readonly recoveryCodeEntityRepository: typeof RecoveryCodeEntity,
+    @InjectModel(ModulePermissionsEntity)
+    private readonly modulePermissionsEntityRepository: typeof ModulePermissionsEntity,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findAll(
     query: FindAdminUsersCommand,
   ): Promise<IUser[] | IPagination<IUser>> {
-    const table = 'users';
     const {
       sortType = SortType.CREATED_AT,
       sort = Sort.DESC,
@@ -59,142 +56,101 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
       endDate,
     } = query;
 
-    const queryBuilder: SelectQueryBuilder<UserEntity> =
-      this.usersEntityRepository
-        .createQueryBuilder(table)
-        .leftJoinAndSelect(`${table}.modulePermissions`, 'modulePermissions')
-        .orderBy(`${table}.${sortType}`, sort);
+    let queryWhere = {};
 
     if (name) {
-      const nameClean = name.trim();
-      if (isNaN(parseInt(nameClean))) {
-        queryBuilder.where(`${table}.fullName LIKE :name`, {
-          name: `%${nameClean}%`,
-        });
-      } else {
-        queryBuilder.where(
-          new Brackets((qb) => {
-            qb.where(`${table}.fullName LIKE :name`, {
-              name: `%${nameClean}%`,
-            }).orWhere(`${table}.id = :name`, { name: parseInt(nameClean) });
-          }),
-        );
-      }
-    }
-    if (startDate) {
-      queryBuilder.andWhere(`${table}.createdAt >= :startDate`, {
-        startDate: formatDateStart(startDate),
-      });
+      queryWhere = {
+        ...queryWhere,
+        [Op.or]: [
+          { fullName: conditionLike('fullName', name) },
+          { id: conditionLikeNumber('id', name) },
+        ],
+      };
     }
 
-    if (endDate) {
-      queryBuilder.andWhere(`${table}.createdAt <= :endDate`, {
-        endDate: formatDateEnd(endDate),
-      });
+    if (startDate && endDate) {
+      queryWhere = {
+        ...queryWhere,
+        [Op.and]: [
+          { createdAt: { [Op.gte]: formatDateStart(startDate) } },
+          { createdAt: { [Op.lte]: formatDateEnd(endDate) } },
+        ],
+      };
     }
 
     if (!isPaginate(paginate)) {
-      const list = await queryBuilder.getMany();
+      const list = await this.usersEntityRepository.findAll({
+        where: queryWhere,
+      });
       return list.map((data) => data as IUser);
     }
 
-    queryBuilder.skip(getSkip(page, perPage)).take(perPage);
-    const [items, total] = await queryBuilder.getManyAndCount();
+    const { rows, count } = await this.usersEntityRepository.findAndCountAll({
+      where: queryWhere,
+      order: [[sortType, sort]],
+      limit: perPage,
+      offset: getSkip(page, perPage),
+      include: [
+        {
+          model: this.modulePermissionsEntityRepository,
+          separate: true, // If not used, count includes each one as a record
+        },
+      ],
+    });
 
-    const response = {
-      items: items.map((data) => data as IUser),
+    return {
+      items: rows.map((data) => data as IUser),
       meta: {
-        totalItems: total,
+        totalItems: count,
         itemsPerPage: perPage,
-        totalPages: getTotalPages(total, perPage),
+        totalPages: getTotalPages(count, perPage),
         currentPage: page,
       },
     };
-    return response;
   }
 
-  async create(
-    data: UserModel,
-    roleId: UserRoles,
-    permissions: ModulePermissionsModel[],
-  ): Promise<UserModel> {
+  async create(data: UserModel, roleId: number): Promise<IUser> {
     let userEntity;
 
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      userEntity = await transactionalEntityManager.save(UserEntity, data);
+    await this.sequelize.transaction(async (t) => {
+      userEntity = await this.usersEntityRepository.create(data, {
+        transaction: t,
+      });
 
       const userRole = new UserRoleModel(roleId, userEntity.id);
-      await transactionalEntityManager.save(UserRoleEntity, userRole);
-
-      permissions.forEach((p) => {
-        p.userId = userEntity.id;
-      });
-      await transactionalEntityManager.save(
-        ModulePermissionsEntity,
-        permissions,
-      );
+      await this.userRoleEntityRepository.create(userRole, { transaction: t });
     });
 
-    return userEntity
-      ? this.parseEntityToModel(userEntity)
-      : (userEntity as UserEntity);
+    return userEntity as IUser;
   }
 
-  async update(
-    id: number,
-    data: UserModel,
-    permissions?: ModulePermissionsModel[],
-  ): Promise<UserModel> {
+  async update(id: number, data: UserModel): Promise<IUser> {
     data.setUpdatedAt();
-    if (permissions) {
-      await this.modulePermissionsEntityRepository.delete({ userId: id });
-      permissions.forEach((p) => {
-        p.userId = id;
-      });
-      await this.modulePermissionsEntityRepository.save(permissions);
-    }
-    await this.usersEntityRepository.update(id, data);
-    return data;
+    await this.usersEntityRepository.update(data, { where: { id } });
+    return data as IUser;
   }
 
   async delete(id: number): Promise<void> {
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      await transactionalEntityManager.delete(UserRoleEntity, { userId: id });
-      await transactionalEntityManager.delete(RecoveryCodeEntity, {
-        userId: id,
+    await this.sequelize.transaction(async (t) => {
+      await this.userRoleEntityRepository.destroy({
+        where: { userId: id },
+        transaction: t,
       });
-      await transactionalEntityManager.delete(ModulePermissionsEntity, {
-        userId: id,
+
+      await this.recoveryCodeEntityRepository.destroy({
+        where: { userId: id },
+        transaction: t,
       });
-      await transactionalEntityManager.delete(UserEntity, id);
+
+      await this.modulePermissionsEntityRepository.destroy({
+        where: { userId: id },
+        transaction: t,
+      });
+
+      await this.usersEntityRepository.destroy({
+        where: { id },
+        transaction: t,
+      });
     });
-  }
-
-  async findOneModulePermission(id: number): Promise<IModule> {
-    const options: FindOneOptions<ModuleEntity> = {
-      where: { id: id },
-    };
-    const moduleEntity = await this.modulesEntityRepository.findOne(options);
-    const response = moduleEntity as IModule;
-    return response;
-  }
-
-  parseEntityToModel(data: UserEntity | IUser): UserModel {
-    const user = new UserModel(
-      data.email,
-      data.firstName,
-      data.lastName,
-      data.isActive,
-      data.emailVerified,
-      data.password,
-      data.photo,
-      data.phone,
-      data.driver,
-      data.token,
-      data.id,
-      data.createdAt,
-      data.updatedAt,
-    );
-    return user;
   }
 }

@@ -7,6 +7,8 @@ import { DiskConfig } from 'config/enums/disk.enum';
 import { DiskModel } from './models/disk.model';
 import { LocalFilesService } from './storages/local-files/local-files.service';
 import { S3FilesService } from './storages/s3-files/s3-files.service';
+import { DiskUnsupportedMethodError } from './errors/disk-unsupported-method-error';
+import { DiskNotImplementedMethodError } from './errors/disk-not-implemented-method-error';
 
 @Injectable()
 export class DiskService extends DiskModel {
@@ -28,7 +30,7 @@ export class DiskService extends DiskModel {
   ): Promise<IFileResponse> {
     if (this.fsConfig.diskConfig == DiskConfig.local) {
       if (isPrivate) {
-        throw new Error('Unsupported method.');
+        throw new DiskUnsupportedMethodError('Unsupported method.');
       }
       return await this.localFilesService.uploadDisk(
         file,
@@ -49,7 +51,7 @@ export class DiskService extends DiskModel {
         quality,
       );
     }
-    throw new Error('Method not implemented.');
+    throw new DiskNotImplementedMethodError('Method not implemented.');
   }
 
   async deleteDisk(url: string): Promise<IDisplayMessageSuccess> {
@@ -59,13 +61,13 @@ export class DiskService extends DiskModel {
     if (this.fsConfig.diskConfig == DiskConfig.s3) {
       return await this.s3FilesService.deleteDisk(url);
     }
-    throw new Error('Method not implemented.');
+    throw new DiskNotImplementedMethodError('Method not implemented.');
   }
 
   async getPresignedUrl(url: string): Promise<string> {
     if (this.fsConfig.diskConfig == DiskConfig.s3) {
       return await this.s3FilesService.getPresignedUrl(url);
     }
-    throw new Error('Unsupported method.');
+    throw new DiskUnsupportedMethodError('Unsupported method.');
   }
 }

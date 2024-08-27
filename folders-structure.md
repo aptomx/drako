@@ -3,11 +3,15 @@
 - .husky
 - config
   - app
+  - apple
   - constants
   - database
     - connectors
+    - errors
   - enums
   - filesystem
+  - jwt
+  - loggerReporting
   - magicVariables
   - mail
   - messageResponses
@@ -22,23 +26,38 @@
     - abstracts
     - commands
     - decorators
+    - enums
+    - errors
     - examples
     - filters
+    - guards
     - interfaces
     - main
     - pipes
+    - strategies
     - utils
+      - sequelize
     - vendor
       - disk
         - enums
+        - errors
         - interfaces
         - models
         - storages
           - local-files
           - s3-files
+      - logger
+        - interfaces
+      - loggerReporting
       - mail
+        - errors
         - templates
+          - layouts
+          - mjml
+          - partials
+          - views
       - resize-images
+        - errors
         - interfaces
   - modules
     - database
@@ -46,10 +65,12 @@
       - seeds
     - nameModule (Base module structure)
       - domain
+        - enums
         - interfaces
         - models
         - repositories
         - services
+      - errors
       - infrastructure
         - commands
         - controllers

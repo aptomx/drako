@@ -1,34 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
 import { IAuthDatabaseRepository } from '../../domain/repositories/auth.interface';
 import { RecoveryCodeEntity } from '../entities/recovery-code.entity';
 import { RecoveryCodeModel } from '../../domain/models/recovery-code.model';
 import { RecoveryCodeTypes } from '../../domain/enums/recovery-code.enum';
 import { IRecoveryCode } from '../../domain/interfaces/recovery-code.interface';
 import { Sort } from 'src/lib/enums/sort.enum';
+import { UserEntity } from '../../../users/infrastructure/entities/user.entity';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class DatabaseAuthRepository implements IAuthDatabaseRepository {
   constructor(
-    @InjectRepository(RecoveryCodeEntity)
-    private readonly recoveryCodeEntityRepository: Repository<RecoveryCodeEntity>,
+    @InjectModel(RecoveryCodeEntity)
+    private readonly recoveryCodeEntityRepository: typeof RecoveryCodeEntity,
+    @InjectModel(UserEntity)
+    private readonly userEntityRepository: typeof UserEntity,
   ) {}
 
-  async createRecoveryCode(
-    data: RecoveryCodeModel,
-  ): Promise<RecoveryCodeModel> {
-    await this.recoveryCodeEntityRepository.save(data);
-    return data;
+  async createRecoveryCode(data: RecoveryCodeModel): Promise<IRecoveryCode> {
+    const recoveryCode = await this.recoveryCodeEntityRepository.create(data);
+    return recoveryCode as IRecoveryCode;
   }
 
   async updateRecoveryCode(
     id: number,
     data: RecoveryCodeModel,
-  ): Promise<RecoveryCodeModel> {
+  ): Promise<IRecoveryCode> {
     data.setUpdatedAt();
-    await this.recoveryCodeEntityRepository.update(id, data);
-    return data;
+    await this.recoveryCodeEntityRepository.update(data, { where: { id } });
+    return data as IRecoveryCode;
   }
 
   async findLastRecoveryCode(
@@ -36,59 +36,35 @@ export class DatabaseAuthRepository implements IAuthDatabaseRepository {
     code: string,
     type: RecoveryCodeTypes,
   ): Promise<IRecoveryCode> {
-    const options: FindOneOptions<RecoveryCodeEntity> = {
-      where: { code, type, user: { email } },
-      order: {
-        id: Sort.DESC,
-      },
-      relations: {
-        user: true,
-      },
-    };
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
-      options,
-    );
-    const response = recoveryCodeEntity as IRecoveryCode;
-    return response;
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
+      where: { code, type },
+      order: [['id', Sort.DESC]],
+      include: [
+        {
+          model: this.userEntityRepository,
+          where: { email },
+        },
+      ],
+    });
+    return recoveryCodeEntity as IRecoveryCode;
   }
 
   async findRecoveryCodeByToken(token: string): Promise<IRecoveryCode> {
-    const options: FindOneOptions<RecoveryCodeEntity> = {
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
       where: { token },
-      relations: {
-        user: true,
-      },
-    };
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
-      options,
-    );
-    const response = recoveryCodeEntity as IRecoveryCode;
-    return response;
+      include: [
+        {
+          model: this.userEntityRepository,
+        },
+      ],
+    });
+    return recoveryCodeEntity as IRecoveryCode;
   }
 
   async findRecoveryCodeById(id: number): Promise<IRecoveryCode> {
-    const options: FindOneOptions<RecoveryCodeEntity> = {
+    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne({
       where: { id },
-    };
-    const recoveryCodeEntity = await this.recoveryCodeEntityRepository.findOne(
-      options,
-    );
-    const response = recoveryCodeEntity as IRecoveryCode;
-    return response;
-  }
-
-  parseEntityToModel(
-    data: RecoveryCodeEntity | IRecoveryCode,
-  ): RecoveryCodeModel {
-    const user = new RecoveryCodeModel(
-      data.code,
-      data.token,
-      data.type,
-      data.userId,
-      data.id,
-      data.createdAt,
-      data.updatedAt,
-    );
-    return user;
+    });
+    return recoveryCodeEntity as IRecoveryCode;
   }
 }
