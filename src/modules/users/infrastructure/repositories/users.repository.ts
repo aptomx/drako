@@ -10,6 +10,8 @@ import { IRole } from '../../domain/interfaces/role.interface';
 import { RoleEntity } from '../entities/role.entity';
 import { UserRoleModel } from '../../domain/models/userRole.model';
 import { Sequelize } from 'sequelize-typescript';
+import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { ModuleEntity } from '../entities/module.entity';
 @Injectable()
 export class DatabaseUsersRepository implements IUsersDatabaseRepository {
   constructor(
@@ -19,6 +21,10 @@ export class DatabaseUsersRepository implements IUsersDatabaseRepository {
     private readonly userRoleEntityRepository: typeof UserRoleEntity,
     @InjectModel(RoleEntity)
     private readonly roleEntityRepository: typeof RoleEntity,
+    @InjectModel(ModulePermissionsEntity)
+    private readonly modulePermissionsEntityRepository: typeof ModulePermissionsEntity,
+    @InjectModel(ModuleEntity)
+    private readonly moduleEntityRepository: typeof ModuleEntity,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -28,6 +34,14 @@ export class DatabaseUsersRepository implements IUsersDatabaseRepository {
       include: [
         {
           model: this.userRoleEntityRepository,
+        },
+        {
+          model: this.modulePermissionsEntityRepository,
+          include: [
+            {
+              model: this.moduleEntityRepository,
+            },
+          ],
         },
       ],
     });

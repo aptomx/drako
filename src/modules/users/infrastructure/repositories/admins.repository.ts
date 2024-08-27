@@ -27,6 +27,10 @@ import {
   conditionLike,
   conditionLikeNumber,
 } from '../../../../lib/utils/sequelize/conditions-sequelize';
+import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { ModulePermissionsModel } from '../../domain/models/module-permissions.model';
+import { IModule } from '../../domain/interfaces/module.interface';
+import { ModuleEntity } from '../entities/module.entity';
 
 @Injectable()
 export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
@@ -39,6 +43,8 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
     private readonly recoveryCodeEntityRepository: typeof RecoveryCodeEntity,
     @InjectModel(ModulePermissionsEntity)
     private readonly modulePermissionsEntityRepository: typeof ModulePermissionsEntity,
+    @InjectModel(ModuleEntity)
+    private readonly moduleEntityRepository: typeof ModuleEntity,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -109,7 +115,11 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
     };
   }
 
-  async create(data: UserModel, roleId: number): Promise<IUser> {
+  async create(
+    data: UserModel,
+    roleId: UserRoles,
+    permissions: ModulePermissionsModel[],
+  ): Promise<IUser> {
     let userEntity;
 
     await this.sequelize.transaction(async (t) => {
@@ -119,15 +129,42 @@ export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {
 
       const userRole = new UserRoleModel(roleId, userEntity.id);
       await this.userRoleEntityRepository.create(userRole, { transaction: t });
+
+      permissions.forEach((p) => {
+        p.userId = userEntity.id;
+      });
+      await this.modulePermissionsEntityRepository.bulkCreate(permissions, {
+        transaction: t,
+      });
     });
 
     return userEntity as IUser;
   }
 
-  async update(id: number, data: UserModel): Promise<IUser> {
+  async update(
+    id: number,
+    data: UserModel,
+    permissions?: ModulePermissionsModel[],
+  ): Promise<IUser> {
     data.setUpdatedAt();
+    if (permissions) {
+      await this.modulePermissionsEntityRepository.destroy({
+        where: { userId: id },
+      });
+      permissions.forEach((p) => {
+        p.userId = id;
+      });
+      await this.modulePermissionsEntityRepository.bulkCreate(permissions);
+    }
     await this.usersEntityRepository.update(data, { where: { id } });
     return data as IUser;
+  }
+
+  async findOneModulePermission(id: number): Promise<IModule> {
+    const moduleEntity = await this.moduleEntityRepository.findOne({
+      where: { id },
+    });
+    return moduleEntity as IModule;
   }
 
   async delete(id: number): Promise<void> {
