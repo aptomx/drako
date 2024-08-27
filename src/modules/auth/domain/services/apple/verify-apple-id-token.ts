@@ -5,8 +5,8 @@ import {
   IVerifyAppleIdTokenParams,
   IVerifyAppleIdTokenResponse,
 } from '../../interfaces/apple.interface';
-import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/constants';
 import { DriversSocialNetwork } from '../../enums/drivers-social-network.enum';
+import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/messageResponses';
 
 const APPLE_BASE_URL = 'https://appleid.apple.com';
 const JWKS_APPLE_URI = '/auth/keys';

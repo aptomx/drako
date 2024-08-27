@@ -13,7 +13,7 @@ import {
   getErrorMessage,
 } from '../utils/errors.util';
 import { LoggerReportingService } from '../vendor/loggerReporting/loggerReporting.service';
-import { BaseError } from '../errors/base-error';
+import { BaseError } from '../abstracts/base-error';
 import { LoggerService } from '../vendor/logger/logger.service';
 import { BaseError as SequelizeError } from 'sequelize';
 

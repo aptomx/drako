@@ -57,6 +57,7 @@ npm install
 ```bash
 - npx sequelize-cli seed:generate --name demo-user # Crea un archivo seed
 - npx sequelize-cli db:seed:all # Corre todos los seeds
+- npx sequelize-cli db:seed --seed name-of-seed # Corre un seed especifico
 - npx sequelize-cli db:seed:undo # Rollback al ultimo seed
 - npx sequelize-cli db:seed:undo --seed name-of-seed-as-in-data # Rollback a un seed en especifico
 - npx sequelize-cli db:seed:undo:all # Rollback todos los seeds

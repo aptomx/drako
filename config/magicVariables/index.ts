@@ -1,7 +1,7 @@
 export const BASE_PREFIX_API = 'api';
 
 export const APP_NAME = 'APP_NAME';
-export const APP_PORT = 'APP_PORT';
+export const APP_PORT = 'PORT';
 export const APP_URL = 'APP_URL';
 
 export const DATABASE_HOST = 'DATABASE_HOST';

@@ -1,4 +1,4 @@
-import { BaseError } from '../../../src/lib/errors/base-error';
+import { BaseError } from '../../../src/lib/abstracts/base-error';
 
 export class DatabaseError extends BaseError {
   status = 500;

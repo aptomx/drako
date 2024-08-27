@@ -1,4 +1,4 @@
-import { BaseError } from '../../../errors/base-error';
+import { BaseError } from '../../../abstracts/base-error';
 
 export class DiskError extends BaseError {
   status = 500;

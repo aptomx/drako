@@ -1,4 +1,4 @@
-import { BaseError } from '../../../lib/errors/base-error';
+import { BaseError } from '../../../lib/abstracts/base-error';
 
 export class TodoError extends BaseError {
   status = 500;
