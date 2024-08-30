@@ -16,7 +16,6 @@
   - mail
   - messageResponses
   - registers
-  - scripts
 - public
   - resizes
   - storage
@@ -62,6 +61,7 @@
   - modules
     - database
       - migrations
+      - scripts
       - seeds
     - nameModule (Base module structure)
       - domain

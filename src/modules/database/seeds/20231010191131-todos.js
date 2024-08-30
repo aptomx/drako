@@ -1,6 +1,10 @@
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const updateSequence = require('../scripts/update-sequence');
+const table = 'todos';
+
 module.exports = {
   async up(queryInterface) {
     const todos = [
@@ -57,21 +61,23 @@ module.exports = {
     for (let i = 0; i < todos.length; i++) {
       const todo = todos[i];
       const todoId = await queryInterface.rawSelect(
-        'todos',
+        table,
         {
           where: { id: todo.id },
         },
         ['id'],
       );
       if (!todoId) {
-        queryInterface.bulkInsert('todos', [todo]);
+        await queryInterface.bulkInsert(table, [todo]);
       } else {
-        queryInterface.bulkUpdate('todos', todo, { id: todo.id });
+        await queryInterface.bulkUpdate(table, todo, { id: todo.id });
       }
     }
+    await updateSequence(queryInterface, table);
   },
 
   async down(queryInterface) {
-    return queryInterface.bulkDelete('todos', null, {});
+    await queryInterface.bulkDelete(table, null, {});
+    await updateSequence(queryInterface, table);
   },
 };
