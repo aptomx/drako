@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IUsersDatabaseRepository } from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
@@ -21,6 +21,8 @@ import { MailService } from 'src/lib/vendor/mail/mail.service';
 import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
 import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
 import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
+import { AdminPermissionsCommand } from '../../infrastructure/commands/admin/admin-permissions.command';
+import { ModulePermissionsModel } from '../models/module-permissions.model';
 
 @Injectable()
 export class AdminsService {
@@ -49,6 +51,10 @@ export class AdminsService {
         'Ya existe un usuario registrado con el mismo email',
       );
     }
+    const modulePermissionsModel = await this.modulePermissions(
+      0,
+      data.permissions,
+    );
 
     const password = getRandomAlphanumeric();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -60,6 +66,7 @@ export class AdminsService {
     const createdUser = await this.adminDatabaseRepository.create(
       newUser,
       UserRoles.Admin,
+      modulePermissionsModel,
     );
     const code = getRandomNumeric(6);
     const token = await this.authService.generateTokenByUser(createdUser);
@@ -90,7 +97,6 @@ export class AdminsService {
     );
 
     const createdUserM = this.parseEntityToModel(createdUser);
-    //TODO:Añadir modulos
     createdUserM.hidePassword();
 
     return createdUserM as IUser;
@@ -104,6 +110,11 @@ export class AdminsService {
       data.email,
     );
     if (verifyEmail) throw new UserAlreadyExistsError(ERROR_USER_EXIST);
+
+    const modulePermissionsModel = await this.modulePermissions(
+      0,
+      data.permissions,
+    );
 
     let existingUserM = this.parseEntityToModel(existingUser);
     if (data.email != existingUserM.email) {
@@ -122,7 +133,7 @@ export class AdminsService {
       await this.authService.createRecoveryCode(recoveryCode);
       await this.mailService.sendMail(
         'verifyEmail',
-        [existingUserM.email],
+        [data.email],
         {
           name: existingUserM.fullName,
           code: code,
@@ -130,17 +141,46 @@ export class AdminsService {
         'Verifica tu email',
       );
     }
-    //TODO:Añadir modulos
     existingUserM.updateUserAdmin(
       data.email,
       data.firstName,
       data.lastName,
       data.phone,
     );
-    await this.adminDatabaseRepository.update(existingUser.id, existingUserM);
+    await this.adminDatabaseRepository.update(
+      existingUser.id,
+      existingUserM,
+      modulePermissionsModel,
+    );
     existingUserM.hidePassword();
 
     return existingUserM as IUser;
+  }
+
+  async modulePermissions(
+    userId: number,
+    permissions: AdminPermissionsCommand[],
+  ): Promise<ModulePermissionsModel[]> {
+    const modulePermissionsModel = await Promise.all(
+      await permissions.map(async (module) => {
+        const moduleId = parseInt(module.moduleId);
+        const mod = await this.adminDatabaseRepository.findOneModulePermission(
+          moduleId,
+        );
+        if (!mod) {
+          throw new BadRequestException(
+            `El módulo con ID ${moduleId} no se encontró`,
+          );
+        }
+        const view =
+          module.view === 'true' || module.view === '1' ? true : false;
+        const edit =
+          module.edit === 'true' || module.edit === '1' ? true : false;
+        const model = new ModulePermissionsModel(userId, moduleId, view, edit);
+        return model;
+      }),
+    );
+    return modulePermissionsModel;
   }
 
   async delete(id: number): Promise<void> {

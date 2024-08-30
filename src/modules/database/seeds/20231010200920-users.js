@@ -1,9 +1,13 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const updateSequence = require('../scripts/update-sequence');
+
 module.exports = {
   async up(queryInterface) {
-    return queryInterface.sequelize.transaction(async (t) => {
+    await queryInterface.sequelize.transaction(async (t) => {
       const users = [
         {
           id: 1,
@@ -62,10 +66,13 @@ module.exports = {
         }
       }
     });
+    await updateSequence(queryInterface, 'users');
+    await updateSequence(queryInterface, 'user_roles');
+    await updateSequence(queryInterface, 'module_permissions');
   },
 
   async down(queryInterface) {
-    return queryInterface.sequelize.transaction(async (t) => {
+    await queryInterface.sequelize.transaction(async (t) => {
       await queryInterface.bulkDelete(
         'module_permissions',
         { userId: 1 },
@@ -80,5 +87,8 @@ module.exports = {
 
       await queryInterface.bulkDelete('users', { id: 1 }, { transaction: t });
     });
+    await updateSequence(queryInterface, 'users');
+    await updateSequence(queryInterface, 'user_roles');
+    await updateSequence(queryInterface, 'module_permissions');
   },
 };

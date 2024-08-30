@@ -37,6 +37,7 @@ module.exports = {
       },
       isActive: {
         type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       emailVerified: {
         type: Sequelize.BOOLEAN,
