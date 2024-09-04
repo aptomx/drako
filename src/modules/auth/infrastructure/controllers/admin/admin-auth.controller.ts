@@ -46,7 +46,7 @@ export class AdminAuthController {
     };
   }
 
-  @ApiTags('Auth')
+  @ApiTags('Admin auth')
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns user admin object',
