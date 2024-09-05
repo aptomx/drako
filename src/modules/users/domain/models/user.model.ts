@@ -66,7 +66,8 @@ export class UserModel implements IUser {
   }
 
   hidePassword?(): UserModel {
-    return { ...this, password: undefined };
+    this.password = undefined;
+    return this;
   }
 
   setUpdatedAt?() {
