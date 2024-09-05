@@ -76,6 +76,7 @@ export class UsersService {
     fileUrl: string,
   ): Promise<UserModel> {
     const newUser = new UserModel(email, firstName, lastName);
+    newUser.isActive = true;
     newUser.emailVerified = true;
     newUser.photo = fileUrl;
     newUser.driver = driver;

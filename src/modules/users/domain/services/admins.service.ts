@@ -62,6 +62,8 @@ export class AdminsService {
     const newUser = new UserModel(data.email, data.firstName, data.lastName);
     newUser.password = hashedPassword;
     newUser.phone = data.phone;
+    newUser.isActive = true;
+    newUser.emailVerified = false;
 
     const createdUser = await this.adminDatabaseRepository.create(
       newUser,
