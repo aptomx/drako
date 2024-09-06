@@ -40,6 +40,7 @@ export class MailService {
     emailToList: string[],
     data: any,
     subject: string,
+    bcc: string[] = [],
   ) {
     if (!this.mlConfig.mailDriver) {
       throw new MailMissingDriverError(ERROR_DRIVER_EMAIL);
@@ -57,6 +58,9 @@ export class MailService {
       template: getTemplateEmail,
       context: context,
     };
+    if (bcc.length > 0) {
+      parameters.bcc = bcc.join();
+    }
     if (data.attachments) {
       /* //EXAMPLE->
       data.attachments = [
