@@ -14,7 +14,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiTags('Auth')
-  @ApiOperation({ summary: 'Auth' })
+  @ApiOperation({ summary: '(All users)' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'returns an updated user if was verified successfully',
@@ -27,7 +27,7 @@ export class AuthController {
   }
 
   @ApiTags('Auth')
-  @ApiOperation({ summary: 'Auth' })
+  @ApiOperation({ summary: '(All users)' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description:
@@ -46,7 +46,7 @@ export class AuthController {
   }
 
   @ApiTags('Auth')
-  @ApiOperation({ summary: 'Auth' })
+  @ApiOperation({ summary: '(All users)' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'returns a token if code is valid',
@@ -60,7 +60,7 @@ export class AuthController {
   }
 
   @ApiTags('Auth')
-  @ApiOperation({ summary: 'Auth' })
+  @ApiOperation({ summary: '(All users)' })
   @ApiResponse({
     status: HttpStatus.OK,
     description:
