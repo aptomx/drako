@@ -43,11 +43,11 @@
             color="#0C1D66"
             line-height="35px"
           >
-            Código de verificación
+            Bienvenido
           </mj-text>
           <mj-text
             color="#000"
-            font-size="32px"
+            font-size="30px"
             font-weight="600"
             align="center"
             line-height="35px"
@@ -61,17 +61,15 @@
             font-weight="400"
             color="#000"
             line-height="18px"
-            align="center"
           >
-            Utiliza el siguiente código para verificar tu cuenta.
+            Se te ha creado una cuenta de acceso a la plataforma, nos da gusto
+            que formes parte de nuestra comunidad.
           </mj-text>
-          <mj-text
-            font-size="24px"
-            font-weight="500"
-            letter-spacing="0"
-            align="center"
-            >{{code}}</mj-text
-          >
+
+          <mj-text font-size="18px" line-height="24px">
+            A continuación recibirás otro correo con el código necesario para
+            verificar tu cuenta.
+          </mj-text>
         </mj-column>
       </mj-section>
       <mj-raw>@if('BODY')</mj-raw>

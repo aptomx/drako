@@ -16,6 +16,7 @@ import { RecoveryCodeEntity } from '../auth/infrastructure/entities/recovery-cod
 import { ModulePermissionsEntity } from './infrastructure/entities/module-permissions.entity';
 import { RoleEntity } from './infrastructure/entities/role.entity';
 import { ModuleEntity } from './infrastructure/entities/module.entity';
+import { ClientUsersController } from './infrastructure/controllers/client/client-users.controller';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { ModuleEntity } from './infrastructure/entities/module.entity';
     UsersService,
     AdminsService,
   ],
-  controllers: [AdminUsersController],
+  controllers: [AdminUsersController, ClientUsersController],
   exports: [UsersService, AdminsService],
 })
 export class UsersModule {}

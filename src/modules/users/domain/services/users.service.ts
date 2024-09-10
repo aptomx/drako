@@ -7,6 +7,12 @@ import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { MailService } from 'src/lib/vendor/mail/mail.service';
 import { UserNotFoundError } from '../../errors/user-not-found-error';
 import { IRole } from '../interfaces/role.interface';
+import { CreateClientUserCommand } from '../../infrastructure/commands/client/create-client-user.command';
+import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
+import { getRandomNumeric } from 'src/lib/utils/ramdom-string';
+import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
+import { AuthService } from 'src/modules/auth/domain/services/auth.service';
+import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +20,7 @@ export class UsersService {
     @Inject(IUsersDatabaseRepository)
     private readonly usersDatabaseRepository: IUsersDatabaseRepository,
     private readonly mailService: MailService,
+    private readonly authService: AuthService,
   ) {}
 
   async findOne(id: number): Promise<IUser> {
@@ -60,10 +67,12 @@ export class UsersService {
     lastName: string,
     driver: string,
     token: string,
+    fileUrl: string,
   ) {
     const user = await this.findOne(userId);
     const userMo = await this.parseEntityToModel(user);
     userMo.updateBySocialNetwork(name, lastName, driver, token);
+    userMo.updateUserPicture(fileUrl);
     return await this.usersDatabaseRepository.update(user.id, userMo);
   }
 
@@ -82,7 +91,10 @@ export class UsersService {
     newUser.driver = driver;
     newUser.token = token;
 
-    await this.usersDatabaseRepository.create(newUser, UserRoles.Client);
+    const createdUser = await this.usersDatabaseRepository.create(
+      newUser,
+      UserRoles.Client,
+    );
 
     await this.mailService.sendMail(
       'welcomeSocialNetwork',
@@ -92,7 +104,65 @@ export class UsersService {
       },
       'Bienvenido',
     );
-    return newUser.hidePassword();
+    const createdUserM = this.parseEntityToModel(createdUser);
+    createdUserM.hidePassword();
+
+    return createdUserM as IUser;
+  }
+
+  async createUserNormal(data: CreateClientUserCommand): Promise<IUser> {
+    const existingUser = await this.findOneByEmail(data.email);
+
+    if (existingUser) {
+      throw new UserAlreadyExistsError(
+        'Ya existe un usuario registrado con el mismo email',
+      );
+    }
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const newUser = new UserModel(data.email, data.firstName, data.lastName);
+    newUser.password = hashedPassword;
+    newUser.isActive = true;
+    newUser.emailVerified = false;
+
+    const createdUser = await this.usersDatabaseRepository.create(
+      newUser,
+      UserRoles.Client,
+    );
+
+    const code = getRandomNumeric(6);
+    const token = await this.authService.generateTokenByUser(createdUser);
+    const recoveryCode = new RecoveryCodeModel(
+      code,
+      token,
+      RecoveryCodeTypes.verifyEmail,
+      createdUser.id,
+    );
+    await this.authService.createRecoveryCode(recoveryCode);
+
+    await this.mailService.sendMail(
+      'welcomeClient',
+      [createdUser.email],
+      {
+        name: createdUser.fullName,
+      },
+      'Bienvenido',
+    );
+
+    await this.mailService.sendMail(
+      'verifyEmail',
+      [createdUser.email],
+      {
+        name: createdUser.fullName,
+        code: code,
+      },
+      'Verifica tu email',
+    );
+
+    const createdUserM = this.parseEntityToModel(createdUser);
+    createdUserM.hidePassword();
+
+    return createdUserM as IUser;
   }
 
   async findRole(roleName: string): Promise<IRole> {

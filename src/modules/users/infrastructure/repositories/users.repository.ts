@@ -34,6 +34,11 @@ export class DatabaseUsersRepository implements IUsersDatabaseRepository {
       include: [
         {
           model: this.userRoleEntityRepository,
+          include: [
+            {
+              model: this.roleEntityRepository,
+            },
+          ],
         },
         {
           model: this.modulePermissionsEntityRepository,

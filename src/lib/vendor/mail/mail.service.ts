@@ -23,6 +23,7 @@ export class MailService {
     recoveryPasswordCode: 'recovery-password-code',
     passwordChanged: 'password-changed',
     welcomeSocialNetwork: 'welcome-social-network',
+    welcomeClient: 'welcome-client',
   };
 
   private readonly logger: Logger = new Logger('Mails');
