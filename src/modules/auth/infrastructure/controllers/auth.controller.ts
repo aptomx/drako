@@ -51,7 +51,7 @@ export class AuthController {
     status: HttpStatus.CREATED,
     description: 'returns a token if code is valid',
   })
-  @Post('validate/recovery/token')
+  @Post('validate/recovery/code')
   async verifyRecoveryPasswordCode(
     @Body() body: VerifyRecoveryPasswordCommand,
   ): Promise<{ token: string }> {
