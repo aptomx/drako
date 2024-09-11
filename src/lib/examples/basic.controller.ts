@@ -56,6 +56,7 @@ export class BasicController {
     });
   }
 
+  @ApiExcludeEndpoint()
   @ApiTags('Example')
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -69,6 +70,7 @@ export class BasicController {
     return await this.basicService.testSendEmail();
   }
 
+  @ApiExcludeEndpoint()
   @ApiTags('Example')
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -87,6 +89,7 @@ export class BasicController {
     return await this.diskService.uploadDisk(file, 'test');
   }
 
+  @ApiExcludeEndpoint()
   @ApiTags('Example')
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -125,6 +128,7 @@ export class BasicController {
     return { displayMessage: 'Archivo eliminado' };
   }
 
+  @ApiExcludeEndpoint()
   @ApiTags('Example')
   @ApiResponse({
     status: HttpStatus.OK,
@@ -138,6 +142,7 @@ export class BasicController {
     return await this.diskService.getPresignedUrl(query.url);
   }
 
+  @ApiExcludeEndpoint()
   @ApiTags('Example')
   @ApiResponse({
     status: HttpStatus.CREATED,

@@ -161,6 +161,11 @@ export class SocialNetworkService {
       lastName = body.lastName;
     }
 
+    let pictureUrl = null;
+    if (payload.provider !== DriversSocialNetwork.Apple) {
+      pictureUrl = await this.savePicture(payload, body.driver);
+    }
+
     if (user) {
       return await this.usersService.updateUserSocialMedia(
         user.id,
@@ -168,12 +173,10 @@ export class SocialNetworkService {
         lastName,
         body.driver,
         body.token,
+        pictureUrl,
       );
     }
-    let pictureUrl = null;
-    if (payload.provider !== DriversSocialNetwork.Apple) {
-      pictureUrl = await this.savePicture(payload, body.driver);
-    }
+
     return await this.usersService.createUserSocialMedia(
       payload.email,
       name,

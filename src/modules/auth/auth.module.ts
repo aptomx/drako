@@ -15,13 +15,14 @@ import { AuthService } from './domain/services/auth.service';
 import { LocalStrategy } from 'src/lib/strategies/local.strategy';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { AdminAuthController } from './infrastructure/controllers/admin/admin-auth.controller';
-import { LoginSocialNetworkController } from './infrastructure/controllers/login-social-network.controller';
 import { SocialNetworkService } from './domain/services/social-network.service';
 import { HttpModule } from '@nestjs/axios';
 import { DiskModule } from 'src/lib/vendor/disk/disk.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserEntity } from '../users/infrastructure/entities/user.entity';
 import { AuthLogsEntity } from './infrastructure/entities/auth-logs.entity';
+import { LoginSocialNetworkController } from './infrastructure/controllers/client/login-social-network.controller';
+import { ClientController } from './infrastructure/controllers/client/client.controller';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { AuthLogsEntity } from './infrastructure/entities/auth-logs.entity';
   controllers: [
     AuthController,
     AdminAuthController,
+    ClientController,
     LoginSocialNetworkController,
   ],
   exports: [AuthService],
