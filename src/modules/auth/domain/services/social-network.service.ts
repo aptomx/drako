@@ -161,9 +161,11 @@ export class SocialNetworkService {
       lastName = body.lastName;
     }
 
-    let pictureUrl = null;
-    if (payload.provider !== DriversSocialNetwork.Apple) {
-      pictureUrl = await this.savePicture(payload, body.driver);
+    let pictureUrl = user?.photo ? user.photo : null;
+    if (!user?.photo) {
+      if (payload.provider !== DriversSocialNetwork.Apple) {
+        pictureUrl = await this.savePicture(payload, body.driver);
+      }
     }
 
     if (user) {
