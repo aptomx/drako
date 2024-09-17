@@ -57,6 +57,7 @@ export class SequelizeService implements SequelizeOptionsFactory {
       password: this.getDatabasePassword(),
       database: this.getDatabaseName(),
       autoLoadModels: true,
+      synchronize: false,
       logging: false,
     };
   }
