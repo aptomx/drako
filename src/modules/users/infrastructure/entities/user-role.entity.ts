@@ -12,7 +12,7 @@ import {
 } from 'sequelize-typescript';
 import { IUserRole } from '../../domain/interfaces/user-role.interface';
 
-@Table({ modelName: 'user_roles' })
+@Table({ tableName: 'user_roles' })
 export class UserRoleEntity extends Model<IUserRole> {
   @Column({
     type: DataType.INTEGER,
