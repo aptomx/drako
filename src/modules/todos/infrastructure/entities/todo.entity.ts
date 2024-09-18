@@ -8,7 +8,7 @@ import {
   Model,
 } from 'sequelize-typescript';
 
-@Table({ modelName: 'todos' })
+@Table({ tableName: 'todos' })
 export class TodoEntity extends Model<ITodo> {
   @Column({
     type: DataType.INTEGER,

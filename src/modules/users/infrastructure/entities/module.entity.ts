@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { IModule } from '../../domain/interfaces/module.interface';
 
-@Table({ modelName: 'modules' })
+@Table({ tableName: 'modules' })
 export class ModuleEntity extends Model<IModule> {
   @Column({
     type: DataType.INTEGER,

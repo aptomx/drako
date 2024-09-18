@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { IAuthLog } from '../../domain/interfaces/auth-logs.interface';
 
-@Table({ modelName: 'auth_logs' })
+@Table({ tableName: 'auth_logs' })
 export class AuthLogsEntity extends Model<IAuthLog> {
   @Column({
     type: DataType.INTEGER,

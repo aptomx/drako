@@ -12,7 +12,7 @@ import {
 } from 'sequelize-typescript';
 import { IRecoveryCode } from '../../domain/interfaces/recovery-code.interface';
 
-@Table({ modelName: 'recovery_codes' })
+@Table({ tableName: 'recovery_codes' })
 export class RecoveryCodeEntity extends Model<IRecoveryCode> {
   @Column({
     type: DataType.INTEGER,
