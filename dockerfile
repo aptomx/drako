@@ -22,6 +22,17 @@ RUN chown -R node:node /usr/src/app
 USER node
 CMD ["sh", "-c", "npm run migration:run && npm run start:dev"]
 
+# Debug stage
+FROM node:22 AS debug
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+COPY --from=dev-deps /usr/src/app/node_modules ./node_modules
+COPY . .
+RUN chown -R node:node /usr/src/app
+USER node
+EXPOSE 9229
+CMD ["sh", "-c", "npm run migration:run && npm run start:debug"]
+
 # Build stage
 FROM node:22 AS build
 WORKDIR /usr/src/app

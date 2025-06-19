@@ -73,32 +73,34 @@ npm install
 
 # Docker
 
-Ejecutar docker-compose.yml
+## Desarrollo Normal
 
 ```bash
-$ docker-compose up -d
+$ npm run docker:up          # Iniciar aplicación
+$ npm run docker:logs        # Ver logs
+$ npm run docker:down        # Apagar aplicación
 ```
 
-Ejecutar migraciones
+## Debugging con VSCode
 
 ```bash
+$ npm run docker:up:debug    # Iniciar en modo debug
+```
+
+Luego en VSCode: Run and Debug → "Debug in Docker" → F5
+
+## Base de Datos
+
+```bash
+$ npm run docker:migrate     # Ejecutar migraciones
+$ npm run docker:seed        # Ejecutar seeds
+$ npm run docker:db:reset    # Resetear DB completa
+```
+
+## Comandos Avanzados
+
+```bash
+$ docker-compose up -d              # Método manual
 $ docker-compose exec app npm run migration:run
-```
-
-Ejecutar seeds
-
-```bash
-$ docker-compose exec app npm run seed
-```
-
-Apagar docker-compose.yml
-
-```bash
-$ docker-compose down
-```
-
-Apagar docker-compose.yml y eliminar volúmenes
-
-```bash
-$ docker-compose down -v
+$ docker-compose down -v            # Eliminar volúmenes
 ```
