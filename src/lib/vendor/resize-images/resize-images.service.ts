@@ -49,7 +49,7 @@ export class ResizeImagesService {
   private async removeTemporaryFolder(pathTemporalFiles: string) {
     try {
       await remove.removeSync(pathTemporalFiles);
-    } catch (e) {}
+    } catch {}
   }
 
   //Read folder temporary and upload files and original to disk config

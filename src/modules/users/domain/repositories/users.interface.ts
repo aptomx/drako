@@ -11,4 +11,4 @@ export interface IUsersDatabaseRepository {
   create(data: UserModel, roleId: number): Promise<IUser>;
 }
 
-export const IUsersDatabaseRepository = Symbol('IUsersDatabaseRepository');
+export const IUsersDatabaseRepositoryToken = Symbol('IUsersDatabaseRepository');

@@ -1,7 +1,7 @@
 export function capitalizeFirstLetter(string: string) {
   try {
     return string.toLowerCase().replace(/^./, string[0].toUpperCase());
-  } catch (error) {
+  } catch {
     return string;
   }
 }
@@ -11,7 +11,7 @@ export function capitalizeAllLetters(string: string) {
       .trim()
       .toLowerCase()
       .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
-  } catch (error) {
+  } catch {
     return string;
   }
 }

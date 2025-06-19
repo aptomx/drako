@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ITodoDatabaseRepository } from '../repositories/todo.interface';
+import {
+  ITodoDatabaseRepository,
+  ITodoDatabaseRepositoryToken,
+} from '../repositories/todo.interface';
 import { TodoCommand } from '../../infrastructure/commands/todo.command';
 import { TodoModel } from '../models/todo.model';
 import { ERROR_NOT_FOUND_REGISTER } from 'config/messageResponses';
@@ -12,7 +15,7 @@ import { TodoCompletedDeletionError } from '../../errors/todo-completed-deletion
 @Injectable()
 export class TodosService {
   constructor(
-    @Inject(ITodoDatabaseRepository)
+    @Inject(ITodoDatabaseRepositoryToken)
     private readonly todoDatabaseRepository: ITodoDatabaseRepository,
   ) {}
 

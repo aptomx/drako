@@ -8,12 +8,18 @@ export class FindAdminUsersCommand extends PaginationCommand {
   @IsOptional()
   readonly name?: string;
 
-  @ApiPropertyOptional({ type: 'string [YYYY-MM-DD]' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'Date in YYYY-MM-DD format',
+  })
   @IsOptional()
   @Validate(isSimpleDate)
   readonly startDate?: string;
 
-  @ApiPropertyOptional({ type: 'string [YYYY-MM-DD]' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'Date in YYYY-MM-DD format',
+  })
   @IsOptional()
   @Validate(isSimpleDate)
   readonly endDate?: string;

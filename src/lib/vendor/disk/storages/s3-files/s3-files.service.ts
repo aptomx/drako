@@ -70,7 +70,7 @@ export class S3FilesService implements IMethodsBase {
     });
     try {
       await this.s3.send(command);
-    } catch (error) {}
+    } catch {}
     return { displayMessage: 'Archivo eliminado' };
   }
 

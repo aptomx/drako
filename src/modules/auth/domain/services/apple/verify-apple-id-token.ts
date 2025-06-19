@@ -41,7 +41,7 @@ export const verifyAppleToken = async (
   let applePublicKey = null;
   try {
     applePublicKey = await getApplePublicKey(kid);
-  } catch (e) {
+  } catch {
     throw new BadRequestException(
       'No se encontró una clave de Apple válida para el token',
     );

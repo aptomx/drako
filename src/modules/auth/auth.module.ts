@@ -7,7 +7,7 @@ import {
   JWT_SECRET_KEY,
 } from '../../../config/magicVariables';
 import { JwtStrategy } from '../../lib/strategies/jwt.strategy';
-import { IAuthDatabaseRepository } from './domain/repositories/auth.interface';
+import { IAuthDatabaseRepositoryToken } from './domain/repositories/auth.interface';
 import { DatabaseAuthRepository } from './infrastructure/repositories/auth.repository';
 import { RecoveryCodeEntity } from './infrastructure/entities/recovery-code.entity';
 import { MailModule } from '../../lib/vendor/mail/mail.module';
@@ -55,7 +55,7 @@ import { ClientController } from './infrastructure/controllers/client/client.con
     LocalStrategy,
     JwtStrategy,
     {
-      provide: IAuthDatabaseRepository,
+      provide: IAuthDatabaseRepositoryToken,
       useClass: DatabaseAuthRepository,
     },
   ],

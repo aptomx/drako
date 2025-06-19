@@ -83,7 +83,7 @@ export class SocialNetworkService {
       );
       info.data.provider = DriversSocialNetwork.Facebook;
       return info.data as IFacebook;
-    } catch (error) {
+    } catch {
       throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(options.driver));
     }
   }
@@ -97,7 +97,7 @@ export class SocialNetworkService {
       );
       info.data.provider = DriversSocialNetwork.Google;
       return info.data as IGoogle;
-    } catch (error) {
+    } catch {
       throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(options.driver));
     }
   }

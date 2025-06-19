@@ -5,30 +5,29 @@ services:
     container_name: nest-app
     build:
       context: .
-      target: ${STAGE}
-      dockerfile: Dockerfile
+      target: ${STAGE:-development}
+      dockerfile: dockerfile
     volumes:
-      - .:/app/
-      - /app/node_modules
+      # Only mount source code in development mode
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
     restart: always
     ports:
-      - ${PORT}:${PORT}
-    expose:
-      - ${PORT}
+      - ${PORT:-3000}:3000
     env_file:
       - .env
     environment:
       APP_NAME: ${APP_NAME}
-      PORT: ${PORT}
+      PORT: ${PORT:-3000}
       APP_URL: ${APP_URL}
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_DIALECT: ${DATABASE_DIALECT}
+      DATABASE_DIALECT: ${DATABASE_DIALECT:-postgres}
       MAIL_DRIVER: ${MAIL_DRIVER}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
       MAIL_HOST: ${MAIL_HOST}
@@ -44,20 +43,23 @@ services:
 
   db:
     container_name: db
-    image: postgres:latest
+    image: pgvector/pgvector:pg16
     restart: always
     ports:
       - '5432:5432'
     env_file:
       - .env
-    expose:
-      - '5432'
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_USER: ${DATABASE_USER}
     volumes:
       - db-vol:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   db-vol:

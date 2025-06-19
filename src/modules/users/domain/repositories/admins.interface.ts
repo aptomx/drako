@@ -22,4 +22,6 @@ export interface IAdminsDatabaseRepository {
   findOneModulePermission(id: number): Promise<IModule>;
 }
 
-export const IAdminsDatabaseRepository = Symbol('IAdminsDatabaseRepository');
+export const IAdminsDatabaseRepositoryToken = Symbol(
+  'IAdminsDatabaseRepository',
+);
