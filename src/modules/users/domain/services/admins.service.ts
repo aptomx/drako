@@ -1,5 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IUsersDatabaseRepository } from '../repositories/users.interface';
+import {
+  IUsersDatabaseRepository,
+  IUsersDatabaseRepositoryToken,
+} from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
 import { UserModel } from '../models/user.model';
@@ -10,7 +13,10 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { UpdateAdminUserCommand } from '../../infrastructure/commands/admin/update-admin-user.command';
-import { IAdminsDatabaseRepository } from '../repositories/admins.interface';
+import {
+  IAdminsDatabaseRepository,
+  IAdminsDatabaseRepositoryToken,
+} from '../repositories/admins.interface';
 import { FindAdminUsersCommand } from '../../infrastructure/commands/admin/find-admin-users.command';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { UsersService } from './users.service';
@@ -27,9 +33,9 @@ import { ModulePermissionsModel } from '../models/module-permissions.model';
 @Injectable()
 export class AdminsService {
   constructor(
-    @Inject(IUsersDatabaseRepository)
+    @Inject(IUsersDatabaseRepositoryToken)
     private readonly usersDatabaseRepository: IUsersDatabaseRepository,
-    @Inject(IAdminsDatabaseRepository)
+    @Inject(IAdminsDatabaseRepositoryToken)
     private readonly adminDatabaseRepository: IAdminsDatabaseRepository,
     private usersService: UsersService,
     private diskService: DiskService,
@@ -166,9 +172,8 @@ export class AdminsService {
     const modulePermissionsModel = await Promise.all(
       await permissions.map(async (module) => {
         const moduleId = parseInt(module.moduleId);
-        const mod = await this.adminDatabaseRepository.findOneModulePermission(
-          moduleId,
-        );
+        const mod =
+          await this.adminDatabaseRepository.findOneModulePermission(moduleId);
         if (!mod) {
           throw new BadRequestException(
             `El módulo con ID ${moduleId} no se encontró`,

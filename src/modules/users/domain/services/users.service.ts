@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IUsersDatabaseRepository } from '../repositories/users.interface';
+import {
+  IUsersDatabaseRepository,
+  IUsersDatabaseRepositoryToken,
+} from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { UserModel } from '../models/user.model';
 import * as bcrypt from 'bcrypt';
@@ -17,7 +20,7 @@ import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.e
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(IUsersDatabaseRepository)
+    @Inject(IUsersDatabaseRepositoryToken)
     private readonly usersDatabaseRepository: IUsersDatabaseRepository,
     private readonly mailService: MailService,
     private readonly authService: AuthService,
