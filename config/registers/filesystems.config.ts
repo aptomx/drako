@@ -1,13 +1,13 @@
 import { registerAs } from '@nestjs/config';
-import {
-  S3_BUCKET_NAME,
-  S3_ACCESS_KEY_ID,
-  S3_SECRET_ACCESS_KEY,
-  S3_REGION,
-  S3_SIGNED_URL_EXPIRATION,
-  DISK_CONFIG,
-} from '../magicVariables';
 import { DiskConfig } from 'config/enums/disk.enum';
+import {
+  DISK_CONFIG,
+  S3_ACCESS_KEY_ID,
+  S3_BUCKET_NAME,
+  S3_REGION,
+  S3_SECRET_ACCESS_KEY,
+  S3_SIGNED_URL_EXPIRATION,
+} from '../magicVariables';
 
 export default registerAs('filesystems', () => ({
   diskConfig: process.env[DISK_CONFIG] || DiskConfig.local,

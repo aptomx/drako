@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { TodoModel } from '../../domain/models/todo.model';
-import { ITodoDatabaseRepository } from '../../domain/repositories/todo.interface';
-import { TodoEntity } from '../entities/todo.entity';
-import { TodoSearchCommand } from '../commands/todo-search.command';
-import { ITodo } from '../../domain/interfaces/todos.interface';
-import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { Sort } from 'src/lib/enums/sort.enum';
-import { SortType } from 'src/lib/enums/sort-type.enum';
+import { InjectModel } from '@nestjs/sequelize';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGINATE,
   DEFAULT_PERPAGE,
 } from 'config/constants';
+import { Sort } from 'src/lib/enums/sort.enum';
+import { SortType } from 'src/lib/enums/sort-type.enum';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import getTotalPages from 'src/lib/utils/calculate-total-pages';
-import { InjectModel } from '@nestjs/sequelize';
 import getSkip from '../../../../lib/utils/calculate-skip-pagination';
 import isPaginate from '../../../../lib/utils/is-paginate';
+import { ITodo } from '../../domain/interfaces/todos.interface';
+import { TodoModel } from '../../domain/models/todo.model';
+import { ITodoDatabaseRepository } from '../../domain/repositories/todo.interface';
+import { TodoSearchCommand } from '../commands/todo-search.command';
+import { TodoEntity } from '../entities/todo.entity';
 
 @Injectable()
 export class DatabaseTodoRepository implements ITodoDatabaseRepository {

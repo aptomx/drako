@@ -1,6 +1,6 @@
-import * as Joi from 'joi';
 import { APPLE_CLIENT_ID } from 'config/magicVariables';
+import { z } from 'zod';
 
 export const envRules = {
-  [APPLE_CLIENT_ID]: Joi.string().optional().default(''),
+  [APPLE_CLIENT_ID]: z.string().default(''),
 };

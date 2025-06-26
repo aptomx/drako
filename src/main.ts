@@ -1,14 +1,14 @@
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { HttpFilterException } from './lib/filters/http-exception.filter';
-import * as exphbs from 'express-handlebars';
-import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BASE_PREFIX_API } from 'config/magicVariables';
-import { LoggerReportingService } from './lib/vendor/loggerReporting/loggerReporting.service';
+import * as exphbs from 'express-handlebars';
+import { join } from 'path';
+import { AppModule } from './app.module';
+import { HttpFilterException } from './lib/filters/http-exception.filter';
 import { LoggerService } from './lib/vendor/logger/logger.service';
+import { LoggerReportingService } from './lib/vendor/loggerReporting/loggerReporting.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 import {
+  DATABASE_DIALECT,
   DATABASE_HOST,
+  DATABASE_NAME,
+  DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
-  DATABASE_PASSWORD,
-  DATABASE_NAME,
-  DATABASE_DIALECT,
 } from '../magicVariables';
 
 export default registerAs('database', () => ({

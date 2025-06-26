@@ -1,13 +1,13 @@
 import { Body, Controller, HttpStatus, Patch, Post } from '@nestjs/common';
-import { AuthService } from '../../domain/services/auth.service';
-import { BASE_PREFIX_API } from '../../../../../config/magicVariables';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RecoveryPasswordCommand } from '../commands/recovery-password.command';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { VerifyAccountCommand } from '../commands/verify-account.command';
 import { UserModel } from 'src/modules/users/domain/models/user.model';
-import { VerifyRecoveryPasswordCommand } from '../commands/verify-recovery-password.command';
+import { BASE_PREFIX_API } from '../../../../../config/magicVariables';
+import { AuthService } from '../../domain/services/auth.service';
+import { RecoveryPasswordCommand } from '../commands/recovery-password.command';
 import { UpdateRecoveryPasswordCommand } from '../commands/update-recovery-password.command';
+import { VerifyAccountCommand } from '../commands/verify-account.command';
+import { VerifyRecoveryPasswordCommand } from '../commands/verify-recovery-password.command';
 
 @Controller(`${BASE_PREFIX_API}/auth`)
 export class AuthController {

@@ -1,12 +1,12 @@
-import * as Joi from 'joi';
+import { z } from 'zod';
 import appEnvRules from './app';
-import mailEnvRules from './mail';
+import appleEnvRules from './apple';
 import filesystemEnvRules from './filesystem';
 import jwtEnvRules from './jwt';
-import appleEnvRules from './apple';
 import loggerReportingEnvRules from './loggerReporting';
+import mailEnvRules from './mail';
 
-const validationSchema = Joi.object({
+const validationSchema = z.object({
   //***************************************
   //*APP
   //***************************************
@@ -30,4 +30,5 @@ const validationSchema = Joi.object({
   //***************************************
   ...loggerReportingEnvRules.envRules,
 });
+
 export default validationSchema;

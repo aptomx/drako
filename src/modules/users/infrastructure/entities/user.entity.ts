@@ -1,17 +1,17 @@
-import { ModulePermissionsEntity } from './module-permissions.entity';
-import { UserRoleEntity } from './user-role.entity';
-import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
 import {
+  Column,
+  CreatedAt,
   DataType,
+  HasMany,
+  HasOne,
   Model,
   Table,
-  Column,
-  HasOne,
-  CreatedAt,
   UpdatedAt,
-  HasMany,
 } from 'sequelize-typescript';
+import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
 import { IUser } from '../../domain/interfaces/user.interface';
+import { ModulePermissionsEntity } from './module-permissions.entity';
+import { UserRoleEntity } from './user-role.entity';
 
 @Table({ tableName: 'users' })
 export class UserEntity extends Model<IUser> {

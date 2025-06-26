@@ -1,8 +1,8 @@
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthUnauthorizedError } from '../../modules/auth/errors/auth-unauthorized-error';
-import { AuthInactiveAccountError } from '../../modules/auth/errors/auth-inactive-account-error';
 import { AuthEmailNotVerifiedError } from '../../modules/auth/errors/auth-email-not-verified-error';
+import { AuthInactiveAccountError } from '../../modules/auth/errors/auth-inactive-account-error';
+import { AuthUnauthorizedError } from '../../modules/auth/errors/auth-unauthorized-error';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

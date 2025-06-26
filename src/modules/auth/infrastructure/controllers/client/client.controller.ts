@@ -9,14 +9,14 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BASE_PREFIX_API } from 'config/magicVariables';
+import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/lib/guards/local-auth.guard';
 import { LoggerService } from 'src/lib/vendor/logger/logger.service';
-import { AuthService } from 'src/modules/auth/domain/services/auth.service';
-import { LoginCommand } from '../../commands/login-command';
 import { IAuthentication } from 'src/modules/auth/domain/interfaces/authentication.interface';
-import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { AuthService } from 'src/modules/auth/domain/services/auth.service';
 import { AuthUserNotFoundError } from 'src/modules/auth/errors/auth-user-not-found-error';
-import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
+import { LoginCommand } from '../../commands/login-command';
 
 @Controller(`${BASE_PREFIX_API}/client/auth`)
 export class ClientController {

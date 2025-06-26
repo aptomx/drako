@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConfigType } from '@nestjs/config';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Transporter } from 'nodemailer';
+import { ConfigType } from '@nestjs/config';
 import {
   ERROR_DRIVER_EMAIL,
   ERROR_TEMPLATE_EMAIL,
 } from 'config/messageResponses';
-import mailConfig from 'config/registers/mail.config';
 import appConfig from 'config/registers/app.config';
-import { MailMissingDriverError } from './errors/mail-missing-driver-error';
-import { MailTemplateNotFoundError } from './errors/mail-template-not-found-error';
+import mailConfig from 'config/registers/mail.config';
+import { Transporter } from 'nodemailer';
 import { LoggerReportingService } from '../loggerReporting/loggerReporting.service';
 import { MailError } from './errors/mail-error';
+import { MailMissingDriverError } from './errors/mail-missing-driver-error';
+import { MailTemplateNotFoundError } from './errors/mail-template-not-found-error';
 
 @Injectable()
 export class MailService {
@@ -39,6 +38,7 @@ export class MailService {
   async sendMail(
     type: string,
     emailToList: string[],
+    // biome-ignore lint/suspicious/noExplicitAny: Email template data structure varies
     data: any,
     subject: string,
     bcc: string[] = [],
@@ -52,6 +52,7 @@ export class MailService {
     }
 
     const context = { ...{ appUrl: this.apConfig.appUrl }, ...data };
+    // biome-ignore lint/suspicious/noExplicitAny: Nodemailer parameters can vary
     const parameters: any = {
       from: `${this.mlConfig.mailFromName} <${this.mlConfig.mailFromAddress}>`,
       to: emailToList.join(),
@@ -70,7 +71,7 @@ export class MailService {
               path: 'path or url',
               cid: 'img', // not repeat the same string in given attachment array of object.
             },
-          ]; 
+          ];
       */
       parameters.attachments = data.attachments;
     }

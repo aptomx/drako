@@ -1,20 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import * as dayjs from 'dayjs';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as sharp from 'sharp';
-import * as util from 'util';
-import * as remove from 'remove';
+import { Injectable, Logger } from '@nestjs/common';
 import { ERROR_GET_SIZE } from 'config/constants';
+import * as dayjs from 'dayjs';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as remove from 'remove';
+import * as sharp from 'sharp';
 import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
-import { ITemporalFiles } from './interfaces/temporal-files.interface';
-import { IValidSizes } from './interfaces/valid-sizes.interface';
-import { IUploadSizeComplete } from './interfaces/upload-complete.interface';
+import * as util from 'util';
 import { DiskService } from '../disk/disk.service';
 import { ResizeImageMeasurementsNotFoundError } from './errors/resize-image-measurements-not-found-error';
+import { ITemporalFiles } from './interfaces/temporal-files.interface';
+import { IUploadSizeComplete } from './interfaces/upload-complete.interface';
+import { IValidSizes } from './interfaces/valid-sizes.interface';
 
 @Injectable()
 export class ResizeImagesService {
+  private readonly logger = new Logger(ResizeImagesService.name);
+
   constructor(private readonly diskService: DiskService) {}
 
   private readonly sizes = {
@@ -49,7 +51,12 @@ export class ResizeImagesService {
   private async removeTemporaryFolder(pathTemporalFiles: string) {
     try {
       await remove.removeSync(pathTemporalFiles);
-    } catch {}
+    } catch (error) {
+      this.logger.warn(
+        `Failed to remove temporary folder: ${pathTemporalFiles}`,
+        error,
+      );
+    }
   }
 
   //Read folder temporary and upload files and original to disk config

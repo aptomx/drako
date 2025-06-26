@@ -1,4 +1,3 @@
-import { ModulePermissionsEntity } from './module-permissions.entity';
 import {
   Column,
   CreatedAt,
@@ -9,6 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { IModule } from '../../domain/interfaces/module.interface';
+import { ModulePermissionsEntity } from './module-permissions.entity';
 
 @Table({ tableName: 'modules' })
 export class ModuleEntity extends Model<IModule> {

@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable } from '@nestjs/common';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { DiskService } from '../vendor/disk/disk.service';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsIn, IsNumber, IsBooleanString } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { IsBooleanString, IsIn, IsNumber, IsOptional } from 'class-validator';
 import { Sort } from '../enums/sort.enum';
 
 const sort = Object.values(Sort);

@@ -1,18 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { IUsersDatabaseRepository } from '../repositories/users.interface';
-import { IUser } from '../interfaces/user.interface';
-import { UserModel } from '../models/user.model';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
-import { MailService } from 'src/lib/vendor/mail/mail.service';
-import { UserNotFoundError } from '../../errors/user-not-found-error';
-import { IRole } from '../interfaces/role.interface';
-import { CreateClientUserCommand } from '../../infrastructure/commands/client/create-client-user.command';
-import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
 import { getRandomNumeric } from 'src/lib/utils/ramdom-string';
+import { MailService } from 'src/lib/vendor/mail/mail.service';
+import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
 import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
 import { AuthService } from 'src/modules/auth/domain/services/auth.service';
-import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
+import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
+import { UserNotFoundError } from '../../errors/user-not-found-error';
+import { CreateClientUserCommand } from '../../infrastructure/commands/client/create-client-user.command';
+import { IRole } from '../interfaces/role.interface';
+import { IUser } from '../interfaces/user.interface';
+import { UserModel } from '../models/user.model';
+import { IUsersDatabaseRepository } from '../repositories/users.interface';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +20,7 @@ export class UsersService {
     @Inject(IUsersDatabaseRepository)
     private readonly usersDatabaseRepository: IUsersDatabaseRepository,
     private readonly mailService: MailService,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
   ) {}
 

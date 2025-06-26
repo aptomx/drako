@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { IFileResponse } from './interfaces/file-response.interface';
-import filesystemsConfig from 'config/registers/filesystems.config';
 import { ConfigType } from '@nestjs/config';
 import { DiskConfig } from 'config/enums/disk.enum';
+import filesystemsConfig from 'config/registers/filesystems.config';
+import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
+import { DiskNotImplementedMethodError } from './errors/disk-not-implemented-method-error';
+import { DiskUnsupportedMethodError } from './errors/disk-unsupported-method-error';
+import { IFileResponse } from './interfaces/file-response.interface';
 import { DiskModel } from './models/disk.model';
 import { LocalFilesService } from './storages/local-files/local-files.service';
 import { S3FilesService } from './storages/s3-files/s3-files.service';
-import { DiskUnsupportedMethodError } from './errors/disk-unsupported-method-error';
-import { DiskNotImplementedMethodError } from './errors/disk-not-implemented-method-error';
 
 @Injectable()
 export class DiskService extends DiskModel {

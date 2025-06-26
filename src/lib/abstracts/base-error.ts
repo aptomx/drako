@@ -3,7 +3,7 @@ export abstract class BaseError extends Error {
 
   abstract errorCodeName: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: Base error class needs flexible details type
   details?: any;
 
   isReportable?: boolean;

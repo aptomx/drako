@@ -1,28 +1,28 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IUsersDatabaseRepository } from '../repositories/users.interface';
-import { IUser } from '../interfaces/user.interface';
-import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
-import { UserModel } from '../models/user.model';
+import * as bcrypt from 'bcrypt';
+import { ERROR_USER_EXIST } from 'config/messageResponses';
+import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import {
   getRandomAlphanumeric,
   getRandomNumeric,
 } from 'src/lib/utils/ramdom-string';
-import * as bcrypt from 'bcrypt';
-import { UserRoles } from 'src/lib/enums/user-roles.enum';
-import { UpdateAdminUserCommand } from '../../infrastructure/commands/admin/update-admin-user.command';
-import { IAdminsDatabaseRepository } from '../repositories/admins.interface';
-import { FindAdminUsersCommand } from '../../infrastructure/commands/admin/find-admin-users.command';
-import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { UsersService } from './users.service';
-import { ERROR_USER_EXIST } from 'config/messageResponses';
 import { DiskService } from 'src/lib/vendor/disk/disk.service';
-import { AuthService } from 'src/modules/auth/domain/services/auth.service';
 import { MailService } from 'src/lib/vendor/mail/mail.service';
-import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
 import { RecoveryCodeTypes } from 'src/modules/auth/domain/enums/recovery-code.enum';
+import { RecoveryCodeModel } from 'src/modules/auth/domain/models/recovery-code.model';
+import { AuthService } from 'src/modules/auth/domain/services/auth.service';
 import { UserAlreadyExistsError } from '../../errors/user-already-exists-error';
 import { AdminPermissionsCommand } from '../../infrastructure/commands/admin/admin-permissions.command';
+import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
+import { FindAdminUsersCommand } from '../../infrastructure/commands/admin/find-admin-users.command';
+import { UpdateAdminUserCommand } from '../../infrastructure/commands/admin/update-admin-user.command';
+import { IUser } from '../interfaces/user.interface';
 import { ModulePermissionsModel } from '../models/module-permissions.model';
+import { UserModel } from '../models/user.model';
+import { IAdminsDatabaseRepository } from '../repositories/admins.interface';
+import { IUsersDatabaseRepository } from '../repositories/users.interface';
+import { UsersService } from './users.service';
 
 @Injectable()
 export class AdminsService {

@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Inject, Injectable } from '@nestjs/common';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as sharp from 'sharp';
-import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import appConfig from 'config/registers/app.config';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { IMethodsBase } from '../../interfaces/methods-base';
-import { DiskService } from '../../disk.service';
-import { IFileResponse } from '../../interfaces/file-response.interface';
-import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as pathLibrary from 'path';
+import * as sharp from 'sharp';
+import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
+import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
+import { DiskService } from '../../disk.service';
+import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
 import { DiskNotImplementedMethodError } from '../../errors/disk-not-implemented-method-error';
+import { IFileResponse } from '../../interfaces/file-response.interface';
+import { IMethodsBase } from '../../interfaces/methods-base';
 
 @Injectable()
 export class LocalFilesService implements IMethodsBase {
+  private readonly logger = new Logger(LocalFilesService.name);
   private readonly pathBase = 'public';
 
   private readonly pathFolder = 'public/storage/app';
@@ -33,7 +34,7 @@ export class LocalFilesService implements IMethodsBase {
     isPrivate = false,
     quality = 80,
   ): Promise<IFileResponse> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: Sharp library requires flexible type for extensions
     const extension: any = diskIntance.getExtenstion(file); //use "any" to simplify rule sharp.FormatEnum
 
     const savePath = `${path.resolve(this.pathFolder)}/${pathFolder}`;
@@ -76,7 +77,9 @@ export class LocalFilesService implements IMethodsBase {
     const removeApiPath = url.replace(this.apConfig.appUrl, '');
     try {
       fs.unlinkSync(`${path.resolve(this.pathBase)}${removeApiPath}`);
-    } catch (error) {}
+    } catch (error) {
+      this.logger.warn(`Failed to delete file: ${removeApiPath}`, error);
+    }
     return { displayMessage: 'Archivo eliminado' };
   }
 

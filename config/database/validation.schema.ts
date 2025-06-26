@@ -1,18 +1,18 @@
-import * as Joi from 'joi';
 import {
+  DATABASE_DIALECT,
   DATABASE_HOST,
   DATABASE_NAME,
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
-  DATABASE_DIALECT,
 } from 'config/magicVariables';
+import { z } from 'zod';
 
 export const envRules = {
-  [DATABASE_HOST]: Joi.string().required(),
-  [DATABASE_PORT]: Joi.string().required(),
-  [DATABASE_USER]: Joi.string().required(),
-  [DATABASE_PASSWORD]: Joi.string().required(),
-  [DATABASE_NAME]: Joi.string().required(),
-  [DATABASE_DIALECT]: Joi.string().required(),
+  [DATABASE_HOST]: z.string().min(1),
+  [DATABASE_PORT]: z.string().min(1),
+  [DATABASE_USER]: z.string().min(1),
+  [DATABASE_PASSWORD]: z.string().min(1),
+  [DATABASE_NAME]: z.string().min(1),
+  [DATABASE_DIALECT]: z.string().min(1),
 };

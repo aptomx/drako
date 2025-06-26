@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { IUsersDatabaseRepository } from '../../domain/repositories/users.interface';
-import { IUser } from '../../domain/interfaces/user.interface';
-import { UserEntity } from '../entities/user.entity';
-import { UserModel } from '../../domain/models/user.model';
-import { UserRoleEntity } from '../entities/user-role.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { IRole } from '../../domain/interfaces/role.interface';
-import { RoleEntity } from '../entities/role.entity';
-import { UserRoleModel } from '../../domain/models/userRole.model';
 import { Sequelize } from 'sequelize-typescript';
-import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { IRole } from '../../domain/interfaces/role.interface';
+import { IUser } from '../../domain/interfaces/user.interface';
+import { UserModel } from '../../domain/models/user.model';
+import { UserRoleModel } from '../../domain/models/userRole.model';
+import { IUsersDatabaseRepository } from '../../domain/repositories/users.interface';
 import { ModuleEntity } from '../entities/module.entity';
+import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { RoleEntity } from '../entities/role.entity';
+import { UserEntity } from '../entities/user.entity';
+import { UserRoleEntity } from '../entities/user-role.entity';
 @Injectable()
 export class DatabaseUsersRepository implements IUsersDatabaseRepository {
   constructor(

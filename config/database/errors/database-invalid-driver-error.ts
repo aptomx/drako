@@ -5,7 +5,7 @@ export class DatabaseInvalidDriverError extends DatabaseError {
 
   errorCodeName = 'DATABASE_INVALID_DRIVER_ERROR';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: Error details can be any type
   constructor(message: string, details?: any, isReportable?: boolean) {
     super(message);
     this.details = details;

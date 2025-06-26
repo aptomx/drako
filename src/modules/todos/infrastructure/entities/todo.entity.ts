@@ -1,12 +1,12 @@
-import { ITodo } from '../../domain/interfaces/todos.interface';
 import {
-  Table,
   Column,
   CreatedAt,
-  UpdatedAt,
   DataType,
   Model,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript';
+import { ITodo } from '../../domain/interfaces/todos.interface';
 
 @Table({ tableName: 'todos' })
 export class TodoEntity extends Model<ITodo> {

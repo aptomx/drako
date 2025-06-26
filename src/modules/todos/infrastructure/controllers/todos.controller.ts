@@ -10,20 +10,20 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { BASE_PREFIX_API } from 'config/magicVariables';
-import { TodosService } from '../../domain/services/todos.service';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { TodoCommand } from '../commands/todo.command';
+import { BASE_PREFIX_API } from 'config/magicVariables';
 import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
-import { TodoUpdateCommand } from '../commands/todo-update.command';
-import { TodoSearchCommand } from '../commands/todo-search.command';
-import { ITodo } from '../../domain/interfaces/todos.interface';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
+import { ITodo } from '../../domain/interfaces/todos.interface';
+import { TodosService } from '../../domain/services/todos.service';
+import { TodoCommand } from '../commands/todo.command';
+import { TodoSearchCommand } from '../commands/todo-search.command';
+import { TodoUpdateCommand } from '../commands/todo-update.command';
 
 @Controller(`${BASE_PREFIX_API}/todos`)
 export class TodosController {

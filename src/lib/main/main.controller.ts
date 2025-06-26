@@ -1,14 +1,14 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { MainService } from './main.service';
 import {
   ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { BASE_PREFIX_API } from 'config/magicVariables';
 import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { BASE_PREFIX_API } from 'config/magicVariables';
+import { MainService } from './main.service';
 
 @Controller()
 export class MainController {

@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, Validate } from 'class-validator';
-import { PaginationCommand } from '../../../../../lib/commands/pagination.command';
 import isSimpleDate from 'src/lib/decorators/simple-date.decorator';
+import { PaginationCommand } from '../../../../../lib/commands/pagination.command';
 
 export class FindAdminUsersCommand extends PaginationCommand {
   @ApiPropertyOptional()

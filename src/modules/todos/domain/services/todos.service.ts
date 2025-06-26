@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ITodoDatabaseRepository } from '../repositories/todo.interface';
-import { TodoCommand } from '../../infrastructure/commands/todo.command';
-import { TodoModel } from '../models/todo.model';
 import { ERROR_NOT_FOUND_REGISTER } from 'config/messageResponses';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
+import { TodoCompletedDeletionError } from '../../errors/todo-completed-deletion-error';
+import { TodoNotFoundError } from '../../errors/todo-not-found-error';
+import { TodoCommand } from '../../infrastructure/commands/todo.command';
 import { TodoSearchCommand } from '../../infrastructure/commands/todo-search.command';
 import { ITodo } from '../interfaces/todos.interface';
-import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { TodoNotFoundError } from '../../errors/todo-not-found-error';
-import { TodoCompletedDeletionError } from '../../errors/todo-completed-deletion-error';
+import { TodoModel } from '../models/todo.model';
+import { ITodoDatabaseRepository } from '../repositories/todo.interface';
 
 @Injectable()
 export class TodosService {

@@ -1,4 +1,3 @@
-import { UsersService } from './../../../domain/services/users.service';
 import {
   Body,
   Controller,
@@ -13,8 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { BASE_PREFIX_API } from '../../../../../../config/magicVariables';
-import { AdminsService } from 'src/modules/users/domain/services/admins.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -22,17 +20,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateAdminUserCommand } from '../../commands/admin/create-admin-user.command';
-import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
-import { UpdateAdminUserCommand } from '../../commands/admin/update-admin-user.command';
-import { FindAdminUsersCommand } from '../../commands/admin/find-admin-users.command';
-import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { BasicFileValidationPipe } from 'src/lib/pipes/basic.file.pipe';
-import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/lib/guards/roles.guard';
 import { Roles } from 'src/lib/decorators/roles.decorator';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { JwtAuthGuard } from 'src/lib/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/lib/guards/roles.guard';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
+import { BasicFileValidationPipe } from 'src/lib/pipes/basic.file.pipe';
+import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
+import { AdminsService } from 'src/modules/users/domain/services/admins.service';
+import { BASE_PREFIX_API } from '../../../../../../config/magicVariables';
+import { UsersService } from './../../../domain/services/users.service';
+import { CreateAdminUserCommand } from '../../commands/admin/create-admin-user.command';
+import { FindAdminUsersCommand } from '../../commands/admin/find-admin-users.command';
+import { UpdateAdminUserCommand } from '../../commands/admin/update-admin-user.command';
 
 @Controller(`${BASE_PREFIX_API}/admin/users`)
 export class AdminUsersController {

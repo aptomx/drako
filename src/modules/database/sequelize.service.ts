@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  SequelizeModuleOptions,
+  SequelizeOptionsFactory,
+} from '@nestjs/sequelize/dist/interfaces/sequelize-options.interface';
+import { DatabaseDialects } from 'config/enums/database-dialects.enum';
+import {
   DATABASE_DIALECT,
   DATABASE_HOST,
   DATABASE_NAME,
@@ -8,11 +13,6 @@ import {
   DATABASE_PORT,
   DATABASE_USER,
 } from 'config/magicVariables';
-import { DatabaseDialects } from 'config/enums/database-dialects.enum';
-import {
-  SequelizeModuleOptions,
-  SequelizeOptionsFactory,
-} from '@nestjs/sequelize/dist/interfaces/sequelize-options.interface';
 import { Dialect } from 'sequelize/types/sequelize';
 
 @Injectable()

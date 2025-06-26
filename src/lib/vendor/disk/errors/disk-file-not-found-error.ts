@@ -5,7 +5,7 @@ export class DiskFileNotFoundError extends DiskError {
 
   errorCodeName = 'DISK_FILE_NOT_FOUND_ERROR';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: Error handling - details can be any type
   constructor(message: string, details?: any, isReportable?: boolean) {
     super(message);
     this.details = details;

@@ -10,9 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { BasicService } from './basic.service';
-import { DiskService } from 'src/lib/vendor/disk/disk.service';
-import { ResizeImagesService } from 'src/lib/vendor/resize-images/resize-images.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiConsumes,
   ApiExcludeEndpoint,
@@ -20,16 +18,18 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Response } from 'express';
-import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
 import { BASE_PREFIX_API } from 'config/magicVariables';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { SWAGGER_SUMMARY_BASIC } from 'config/messageResponses';
+import { Response } from 'express';
 import { FileCommand } from 'src/lib/commands/file.command';
-import { BasicFileValidationPipe } from 'src/lib/pipes/basic.file.pipe';
-import { IFileResponse } from 'src/lib/vendor/disk/interfaces/file-response.interface';
 import { UrlCommand } from 'src/lib/commands/url.command';
+import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
+import { BasicFileValidationPipe } from 'src/lib/pipes/basic.file.pipe';
+import { DiskService } from 'src/lib/vendor/disk/disk.service';
+import { IFileResponse } from 'src/lib/vendor/disk/interfaces/file-response.interface';
 import { IUploadSizeComplete } from 'src/lib/vendor/resize-images/interfaces/upload-complete.interface';
+import { ResizeImagesService } from 'src/lib/vendor/resize-images/resize-images.service';
+import { BasicService } from './basic.service';
 
 @Controller()
 export class BasicController {

@@ -1,27 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
 import {
-  S3Client,
-  PutObjectCommand,
   DeleteObjectCommand,
-  PutObjectCommandInput,
   GetObjectCommand,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import filesystemsConfig from 'config/registers/filesystems.config';
-import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
 import * as mime from 'mime-types';
-import * as sharp from 'sharp';
-import { IMethodsBase } from '../../interfaces/methods-base';
-import { DiskService } from '../../disk.service';
-import { IFileResponse } from '../../interfaces/file-response.interface';
-import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
 import * as pathLibrary from 'path';
+import * as sharp from 'sharp';
+import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
+import { getRandomAlphanumeric } from 'src/lib/utils/ramdom-string';
+import { DiskService } from '../../disk.service';
+import { optimizedFormatAvailableList } from '../../enums/optimized-format-available';
 import { DiskUnexpectedS3Error } from '../../errors/disk-unexpected-S3-error';
+import { IFileResponse } from '../../interfaces/file-response.interface';
+import { IMethodsBase } from '../../interfaces/methods-base';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
+  private readonly logger = new Logger(S3FilesService.name);
+
   constructor(
     @Inject(filesystemsConfig.KEY)
     private readonly fsConfig: ConfigType<typeof filesystemsConfig>,
@@ -36,7 +38,7 @@ export class S3FilesService implements IMethodsBase {
     isPrivate = false,
     quality = 80,
   ): Promise<IFileResponse> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: Sharp library requires flexible type for extensions
     const extension: any = diskIntance.getExtenstion(file); //use "any" to simplify rule sharp.FormatEnum
     let bufferInfo = file.buffer;
 
@@ -70,7 +72,9 @@ export class S3FilesService implements IMethodsBase {
     });
     try {
       await this.s3.send(command);
-    } catch {}
+    } catch (error) {
+      this.logger.warn(`Failed to delete S3 object: ${key}`, error);
+    }
     return { displayMessage: 'Archivo eliminado' };
   }
 

@@ -1,13 +1,13 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { AuthMissingCredentialsError } from '../../modules/auth/errors/auth-missing-credentials-error';
-import { AuthError } from '../../modules/auth/errors/auth-error';
-import { AuthUnauthorizedError } from '../../modules/auth/errors/auth-unauthorized-error';
-import { AuthInactiveAccountError } from '../../modules/auth/errors/auth-inactive-account-error';
-import { AuthEmailNotVerifiedError } from '../../modules/auth/errors/auth-email-not-verified-error';
-import { LoggerService } from '../vendor/logger/logger.service';
 import { AuthLogStatus } from '../../modules/auth/domain/enums/auth-log-status.enum';
+import { AuthEmailNotVerifiedError } from '../../modules/auth/errors/auth-email-not-verified-error';
+import { AuthError } from '../../modules/auth/errors/auth-error';
+import { AuthInactiveAccountError } from '../../modules/auth/errors/auth-inactive-account-error';
+import { AuthMissingCredentialsError } from '../../modules/auth/errors/auth-missing-credentials-error';
+import { AuthUnauthorizedError } from '../../modules/auth/errors/auth-unauthorized-error';
+import { LoggerService } from '../vendor/logger/logger.service';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {

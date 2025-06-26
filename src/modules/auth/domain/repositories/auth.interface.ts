@@ -1,6 +1,6 @@
-import { RecoveryCodeModel } from '../models/recovery-code.model';
 import { RecoveryCodeTypes } from '../enums/recovery-code.enum';
 import { IRecoveryCode } from '../interfaces/recovery-code.interface';
+import { RecoveryCodeModel } from '../models/recovery-code.model';
 
 export interface IAuthDatabaseRepository {
   createRecoveryCode(data: RecoveryCodeModel): Promise<IRecoveryCode>;

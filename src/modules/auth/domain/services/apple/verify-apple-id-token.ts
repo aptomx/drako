@@ -1,12 +1,12 @@
+import { BadRequestException, Logger } from '@nestjs/common';
+import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/messageResponses';
 import * as jwt from 'jsonwebtoken';
 import * as jwksClient from 'jwks-rsa';
-import { BadRequestException, Logger } from '@nestjs/common';
+import { DriversSocialNetwork } from '../../enums/drivers-social-network.enum';
 import {
   IVerifyAppleIdTokenParams,
   IVerifyAppleIdTokenResponse,
 } from '../../interfaces/apple.interface';
-import { DriversSocialNetwork } from '../../enums/drivers-social-network.enum';
-import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/messageResponses';
 
 const APPLE_BASE_URL = 'https://appleid.apple.com';
 const JWKS_APPLE_URI = '/auth/keys';

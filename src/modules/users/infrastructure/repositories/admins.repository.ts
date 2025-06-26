@@ -1,36 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { IUser } from '../../domain/interfaces/user.interface';
-import { UserEntity } from '../entities/user.entity';
-import { IAdminsDatabaseRepository } from '../../domain/repositories/admins.interface';
-import { IPagination } from 'src/lib/interfaces/pagination.interface';
-import { FindAdminUsersCommand } from '../commands/admin/find-admin-users.command';
-import { SortType } from 'src/lib/enums/sort-type.enum';
-import { Sort } from 'src/lib/enums/sort.enum';
+import { InjectModel } from '@nestjs/sequelize';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGINATE,
   DEFAULT_PERPAGE,
 } from 'config/constants';
-import isPaginate from 'src/lib/utils/is-paginate';
+import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Sort } from 'src/lib/enums/sort.enum';
+import { SortType } from 'src/lib/enums/sort-type.enum';
+import { UserRoles } from 'src/lib/enums/user-roles.enum';
+import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import getSkip from 'src/lib/utils/calculate-skip-pagination';
 import getTotalPages from 'src/lib/utils/calculate-total-pages';
-import { UserModel } from '../../domain/models/user.model';
-import { UserRoleModel } from '../../domain/models/userRole.model';
-import { UserRoleEntity } from '../entities/user-role.entity';
 import { formatDateEnd, formatDateStart } from 'src/lib/utils/dates';
+import isPaginate from 'src/lib/utils/is-paginate';
 import { RecoveryCodeEntity } from 'src/modules/auth/infrastructure/entities/recovery-code.entity';
-import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
-import { InjectModel } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize-typescript';
-import { Op } from 'sequelize';
 import {
   conditionLike,
   conditionLikeNumber,
 } from '../../../../lib/utils/sequelize/conditions-sequelize';
-import { UserRoles } from 'src/lib/enums/user-roles.enum';
-import { ModulePermissionsModel } from '../../domain/models/module-permissions.model';
 import { IModule } from '../../domain/interfaces/module.interface';
+import { IUser } from '../../domain/interfaces/user.interface';
+import { ModulePermissionsModel } from '../../domain/models/module-permissions.model';
+import { UserModel } from '../../domain/models/user.model';
+import { UserRoleModel } from '../../domain/models/userRole.model';
+import { IAdminsDatabaseRepository } from '../../domain/repositories/admins.interface';
+import { FindAdminUsersCommand } from '../commands/admin/find-admin-users.command';
 import { ModuleEntity } from '../entities/module.entity';
+import { ModulePermissionsEntity } from '../entities/module-permissions.entity';
+import { UserEntity } from '../entities/user.entity';
+import { UserRoleEntity } from '../entities/user-role.entity';
 
 @Injectable()
 export class DatabaseAdminsRepository implements IAdminsDatabaseRepository {

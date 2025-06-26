@@ -1,5 +1,3 @@
-import { UserEntity } from '../../../users/infrastructure/entities/user.entity';
-import { RecoveryCodeTypes } from '../../domain/enums/recovery-code.enum';
 import {
   BelongsTo,
   Column,
@@ -10,6 +8,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { UserEntity } from '../../../users/infrastructure/entities/user.entity';
+import { RecoveryCodeTypes } from '../../domain/enums/recovery-code.enum';
 import { IRecoveryCode } from '../../domain/interfaces/recovery-code.interface';
 
 @Table({ tableName: 'recovery_codes' })

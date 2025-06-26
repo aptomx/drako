@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { S3FilesService } from './s3-files.service';
-import { ConfigService } from '@nestjs/config';
 import { S3Client } from '@aws-sdk/client-s3';
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   S3_ACCESS_KEY_ID,
   S3_REGION,
   S3_SECRET_ACCESS_KEY,
 } from 'config/magicVariables';
+import { S3FilesService } from './s3-files.service';
 
 @Module({
   providers: [

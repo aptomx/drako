@@ -1,10 +1,10 @@
-import { IFileResponse } from '../interfaces/file-response.interface';
-import * as mime from 'mime-types';
 import { DEFAULT_LIMIT_IN_MB_OF_FILES } from 'config/constants';
+import * as mime from 'mime-types';
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
 import { DiskFileNotFoundError } from '../errors/disk-file-not-found-error';
-import { DiskInvalidExtensionFileError } from '../errors/disk-invalid-extension-file-error';
 import { DiskFileTooLargeError } from '../errors/disk-file-too-large-error';
+import { DiskInvalidExtensionFileError } from '../errors/disk-invalid-extension-file-error';
+import { IFileResponse } from '../interfaces/file-response.interface';
 
 export abstract class DiskModel {
   abstract uploadDisk(

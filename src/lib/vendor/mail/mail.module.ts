@@ -1,11 +1,7 @@
-import { SES_REGION } from './../../../../config/magicVariables/index';
-import { Module } from '@nestjs/common';
-import { MailService } from './mail.service';
-import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
-import { join } from 'path';
 import * as aws from '@aws-sdk/client-ses';
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { MailDrivers } from 'config/enums/mail.enum';
 import {
   APP_URL,
   MAIL_DRIVER,
@@ -14,8 +10,12 @@ import {
   MAIL_PORT,
   MAIL_USERNAME,
 } from 'config/magicVariables';
-import { MailDrivers } from 'config/enums/mail.enum';
+import * as nodemailer from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
+import { join } from 'path';
+import { SES_REGION } from './../../../../config/magicVariables/index';
 import { LoggerReportingModule } from '../loggerReporting/loggerReporting.module';
+import { MailService } from './mail.service';
 
 @Module({
   imports: [LoggerReportingModule],

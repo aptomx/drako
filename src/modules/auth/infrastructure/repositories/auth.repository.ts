@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthDatabaseRepository } from '../../domain/repositories/auth.interface';
-import { RecoveryCodeEntity } from '../entities/recovery-code.entity';
-import { RecoveryCodeModel } from '../../domain/models/recovery-code.model';
-import { RecoveryCodeTypes } from '../../domain/enums/recovery-code.enum';
-import { IRecoveryCode } from '../../domain/interfaces/recovery-code.interface';
+import { InjectModel } from '@nestjs/sequelize';
 import { Sort } from 'src/lib/enums/sort.enum';
 import { UserEntity } from '../../../users/infrastructure/entities/user.entity';
-import { InjectModel } from '@nestjs/sequelize';
+import { RecoveryCodeTypes } from '../../domain/enums/recovery-code.enum';
+import { IRecoveryCode } from '../../domain/interfaces/recovery-code.interface';
+import { RecoveryCodeModel } from '../../domain/models/recovery-code.model';
+import { IAuthDatabaseRepository } from '../../domain/repositories/auth.interface';
+import { RecoveryCodeEntity } from '../entities/recovery-code.entity';
 
 @Injectable()
 export class DatabaseAuthRepository implements IAuthDatabaseRepository {

@@ -1,8 +1,8 @@
-import * as dotenv from 'dotenv';
 import { DatabaseDialects } from 'config/enums/database-dialects.enum';
-import { DatabaseInvalidDriverError } from '../errors/database-invalid-driver-error';
+import * as dotenv from 'dotenv';
 import { Sequelize } from 'sequelize-typescript';
 import { AuthLogsEntity } from '../../../src/modules/auth/infrastructure/entities/auth-logs.entity';
+import { DatabaseInvalidDriverError } from '../errors/database-invalid-driver-error';
 
 dotenv.config({ path: '.env' });
 

@@ -1,30 +1,30 @@
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { LoginSocialNetworkCommand } from '../../infrastructure/commands/login-social-network.command';
-import { IAuthentication } from '../interfaces/authentication.interface';
-import { IGoogle } from '../interfaces/google.interface';
-import { IFacebook } from '../interfaces/facebook.interface';
-import { DriversSocialNetwork } from '../enums/drivers-social-network.enum';
-import { firstValueFrom } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
-import { AxiosRequestConfig } from 'axios';
-import { UsersService } from 'src/modules/users/domain/services/users.service';
-import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
-import { UserModel } from 'src/modules/users/domain/models/user.model';
-import { DiskService } from 'src/lib/vendor/disk/disk.service';
-import { AuthService } from './auth.service';
-import { IApple } from '../interfaces/apple.interface';
-import appleConfig from 'config/registers/apple.config';
 import { ConfigType } from '@nestjs/config';
-import verifyAppleToken from './apple/verify-apple-id-token';
+import { AxiosRequestConfig } from 'axios';
 import {
   SOCIAL_NETWORK_EMAIL_ERROR,
   SOCIAL_NETWORK_TOKEN_ERROR,
 } from 'config/messageResponses';
+import appleConfig from 'config/registers/apple.config';
+import { firstValueFrom } from 'rxjs';
+import { DiskService } from 'src/lib/vendor/disk/disk.service';
+import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
+import { UserModel } from 'src/modules/users/domain/models/user.model';
+import { UsersService } from 'src/modules/users/domain/services/users.service';
+import { LoginSocialNetworkCommand } from '../../infrastructure/commands/login-social-network.command';
+import { DriversSocialNetwork } from '../enums/drivers-social-network.enum';
+import { IApple } from '../interfaces/apple.interface';
+import { IAuthentication } from '../interfaces/authentication.interface';
+import { IFacebook } from '../interfaces/facebook.interface';
+import { IGoogle } from '../interfaces/google.interface';
+import verifyAppleToken from './apple/verify-apple-id-token';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class SocialNetworkService {

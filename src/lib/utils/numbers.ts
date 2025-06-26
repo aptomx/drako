@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: Legacy utility function accepts multiple input types
 export function formatNumbers(nStr: any, inD = '.', outD = '.', sep = ',') {
   if (typeof nStr === 'undefined' || isNaN(nStr) || nStr === null) {
     return '0.00';

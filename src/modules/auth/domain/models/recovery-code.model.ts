@@ -1,5 +1,5 @@
-import { IRecoveryCode } from '../interfaces/recovery-code.interface';
 import { RecoveryCodeTypes } from '../enums/recovery-code.enum';
+import { IRecoveryCode } from '../interfaces/recovery-code.interface';
 
 export class RecoveryCodeModel implements IRecoveryCode {
   id: number;

@@ -1,4 +1,4 @@
-import * as Joi from 'joi';
+import { MailDrivers } from 'config/enums/mail.enum';
 import {
   MAIL_DRIVER,
   MAIL_FROM_ADDRESS,
@@ -12,61 +12,65 @@ import {
   SES_REGION,
   SES_SECRET,
 } from 'config/magicVariables';
-import { MailDrivers } from 'config/enums/mail.enum';
+import { z } from 'zod';
 
-export const envRules = {
-  [MAIL_DRIVER]: Joi.string()
-    .allow('')
-    .valid(MailDrivers.ses, MailDrivers.smtp, MailDrivers.mail)
-    .default(''),
-  [SES_KEY]: Joi.when(MAIL_DRIVER, {
-    is: MailDrivers.ses,
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [SES_SECRET]: Joi.when(MAIL_DRIVER, {
-    is: MailDrivers.ses,
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [SES_REGION]: Joi.when(MAIL_DRIVER, {
-    is: MailDrivers.ses,
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_HOST]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_PORT]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_USERNAME]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_PASSWORD]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_FROM_NAME]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail, MailDrivers.ses),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_FROM_ADDRESS]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail, MailDrivers.ses),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  [MAIL_TEST]: Joi.when(MAIL_DRIVER, {
-    is: Joi.string().valid(MailDrivers.smtp, MailDrivers.mail, MailDrivers.ses),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
+// Base schema for individual fields
+const baseEnvRules = {
+  [MAIL_DRIVER]: z
+    .enum([MailDrivers.ses, MailDrivers.smtp, MailDrivers.mail])
+    .default(MailDrivers.mail),
+  [SES_KEY]: z.string().optional(),
+  [SES_SECRET]: z.string().optional(),
+  [SES_REGION]: z.string().optional(),
+  [MAIL_HOST]: z.string().optional(),
+  [MAIL_PORT]: z.string().optional(),
+  [MAIL_USERNAME]: z.string().optional(),
+  [MAIL_PASSWORD]: z.string().optional(),
+  [MAIL_FROM_NAME]: z.string().optional(),
+  [MAIL_FROM_ADDRESS]: z.string().optional(),
+  [MAIL_TEST]: z.string().optional(),
 };
+
+// Create a schema that validates the conditional logic
+const mailSchema = z.object(baseEnvRules).refine(
+  (data) => {
+    const driver = data[MAIL_DRIVER];
+
+    // SES specific validations
+    if (driver === MailDrivers.ses) {
+      return !!(
+        data[SES_KEY] &&
+        data[SES_SECRET] &&
+        data[SES_REGION] &&
+        data[MAIL_FROM_NAME] &&
+        data[MAIL_FROM_ADDRESS] &&
+        data[MAIL_TEST]
+      );
+    }
+
+    // SMTP and Mail specific validations
+    if (driver === MailDrivers.smtp || driver === MailDrivers.mail) {
+      return !!(
+        data[MAIL_HOST] &&
+        data[MAIL_PORT] &&
+        data[MAIL_USERNAME] &&
+        data[MAIL_PASSWORD] &&
+        data[MAIL_FROM_NAME] &&
+        data[MAIL_FROM_ADDRESS] &&
+        data[MAIL_TEST]
+      );
+    }
+
+    return true;
+  },
+  {
+    message: 'Mail configuration is incomplete for the selected driver',
+    path: [MAIL_DRIVER],
+  },
+);
+
+// Export the rules for compatibility with existing code
+export const envRules = baseEnvRules;
+
+// Export the complete schema for validation
+export const envSchema = mailSchema;

@@ -1,29 +1,29 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../../../users/domain/services/users.service';
-import { UserModel } from '../../../users/domain/models/user.model';
-import { IAuthDatabaseRepository } from '../repositories/auth.interface';
-import { MailService } from '../../../../lib/vendor/mail/mail.service';
-import { getRandomNumeric } from 'src/lib/utils/ramdom-string';
-import { RecoveryCodeModel } from '../models/recovery-code.model';
-import { RecoveryCodeTypes } from '../enums/recovery-code.enum';
 import jwtConfig from 'config/registers/jwt.config';
-import { ConfigType } from '@nestjs/config';
-import { VerifyAccountCommand } from '../../infrastructure/commands/verify-account.command';
-import { IVerifyToken } from '../interfaces/verify-token.interface';
-import { IRecoveryCode } from '../interfaces/recovery-code.interface';
-import { VerifyRecoveryPasswordCommand } from '../../infrastructure/commands/verify-recovery-password.command';
-import { UpdateRecoveryPasswordCommand } from '../../infrastructure/commands/update-recovery-password.command';
+import { getRandomNumeric } from 'src/lib/utils/ramdom-string';
 import { IUser } from 'src/modules/users/domain/interfaces/user.interface';
+import { MailService } from '../../../../lib/vendor/mail/mail.service';
+import { UserModel } from '../../../users/domain/models/user.model';
+import { UsersService } from '../../../users/domain/services/users.service';
 import { UserNotFoundError } from '../../../users/errors/user-not-found-error';
-import { AuthMissingCredentialsError } from '../../errors/auth-missing-credentials-error';
-import { AuthIncorrectPasswordError } from '../../errors/auth-incorrect-password-error';
-import { AuthInvalidTokenError } from '../../errors/auth-invalid-token-error';
-import { AuthMissingRecoveryCodeIdError } from '../../errors/auth-missing-recovery-code-id-error';
-import { AuthInvalidRecoveryCodeError } from '../../errors/auth-invalid-recovery-code-error';
 import { AuthAccountAlreadyVerifiedError } from '../../errors/auth-account-already-verified-error';
+import { AuthIncorrectPasswordError } from '../../errors/auth-incorrect-password-error';
+import { AuthInvalidRecoveryCodeError } from '../../errors/auth-invalid-recovery-code-error';
+import { AuthInvalidTokenError } from '../../errors/auth-invalid-token-error';
+import { AuthMissingCredentialsError } from '../../errors/auth-missing-credentials-error';
+import { AuthMissingRecoveryCodeIdError } from '../../errors/auth-missing-recovery-code-id-error';
 import { AuthNoPasswordResetRequestError } from '../../errors/auth-no-password-reset-request-error';
+import { UpdateRecoveryPasswordCommand } from '../../infrastructure/commands/update-recovery-password.command';
+import { VerifyAccountCommand } from '../../infrastructure/commands/verify-account.command';
+import { VerifyRecoveryPasswordCommand } from '../../infrastructure/commands/verify-recovery-password.command';
+import { RecoveryCodeTypes } from '../enums/recovery-code.enum';
+import { IRecoveryCode } from '../interfaces/recovery-code.interface';
+import { IVerifyToken } from '../interfaces/verify-token.interface';
+import { RecoveryCodeModel } from '../models/recovery-code.model';
+import { IAuthDatabaseRepository } from '../repositories/auth.interface';
 
 @Injectable()
 export class AuthService {

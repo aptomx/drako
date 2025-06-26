@@ -1,6 +1,6 @@
 import { IDisplayMessageSuccess } from 'src/lib/interfaces/display-message-success.interface';
-import { IFileResponse } from './file-response.interface';
 import { DiskService } from '../disk.service';
+import { IFileResponse } from './file-response.interface';
 
 export interface IMethodsBase {
   uploadDisk(

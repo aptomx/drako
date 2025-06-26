@@ -1,9 +1,9 @@
 import { registerAs } from '@nestjs/config';
 import {
-  MAIL_FROM_NAME,
-  MAIL_FROM_ADDRESS,
-  MAIL_TEST,
   MAIL_DRIVER,
+  MAIL_FROM_ADDRESS,
+  MAIL_FROM_NAME,
+  MAIL_TEST,
 } from '../magicVariables';
 
 export default registerAs('mail', () => ({

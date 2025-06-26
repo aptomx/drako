@@ -1,6 +1,6 @@
+import { IRole } from '../interfaces/role.interface';
 import { IUser } from '../interfaces/user.interface';
 import { UserModel } from '../models/user.model';
-import { IRole } from '../interfaces/role.interface';
 
 export interface IUsersDatabaseRepository {
   findOne(id: number): Promise<IUser>;

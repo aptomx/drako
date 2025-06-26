@@ -1,5 +1,3 @@
-import { UserEntity } from './user.entity';
-import { RoleEntity } from './role.entity';
 import {
   BelongsTo,
   Column,
@@ -11,6 +9,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { IUserRole } from '../../domain/interfaces/user-role.interface';
+import { RoleEntity } from './role.entity';
+import { UserEntity } from './user.entity';
 
 @Table({ tableName: 'user_roles' })
 export class UserRoleEntity extends Model<IUserRole> {
