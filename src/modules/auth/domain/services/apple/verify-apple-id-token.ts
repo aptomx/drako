@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import * as jwksClient from 'jwks-rsa';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import {
   IVerifyAppleIdTokenParams,
   IVerifyAppleIdTokenResponse,
@@ -11,6 +11,7 @@ import { SOCIAL_NETWORK_TOKEN_ERROR } from 'config/messageResponses';
 const APPLE_BASE_URL = 'https://appleid.apple.com';
 const JWKS_APPLE_URI = '/auth/keys';
 const DRIVER = DriversSocialNetwork.Apple;
+const logger = new Logger('AppleIdTokenVerification');
 
 export const getApplePublicKey = async (kid: string): Promise<string> => {
   const client = jwksClient({
@@ -41,7 +42,8 @@ export const verifyAppleToken = async (
   let applePublicKey = null;
   try {
     applePublicKey = await getApplePublicKey(kid);
-  } catch {
+  } catch (error) {
+    logger.error('Failed to get Apple public key', error?.stack);
     throw new BadRequestException(
       'No se encontró una clave de Apple válida para el token',
     );
@@ -54,7 +56,7 @@ export const verifyAppleToken = async (
       algorithms: [alg as jwt.Algorithm],
     }) as IVerifyAppleIdTokenResponse;
   } catch (error) {
-    console.log({ error });
+    logger.error('Apple ID token verification failed', error?.stack);
     throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(DRIVER));
   }
 

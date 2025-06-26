@@ -1,8 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import {
-  IUsersDatabaseRepository,
-  IUsersDatabaseRepositoryToken,
-} from '../repositories/users.interface';
+import { IUsersDatabaseRepository } from '../repositories/users.interface';
 import { IUser } from '../interfaces/user.interface';
 import { CreateAdminUserCommand } from '../../infrastructure/commands/admin/create-admin-user.command';
 import { UserModel } from '../models/user.model';
@@ -13,10 +10,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UserRoles } from 'src/lib/enums/user-roles.enum';
 import { UpdateAdminUserCommand } from '../../infrastructure/commands/admin/update-admin-user.command';
-import {
-  IAdminsDatabaseRepository,
-  IAdminsDatabaseRepositoryToken,
-} from '../repositories/admins.interface';
+import { IAdminsDatabaseRepository } from '../repositories/admins.interface';
 import { FindAdminUsersCommand } from '../../infrastructure/commands/admin/find-admin-users.command';
 import { IPagination } from 'src/lib/interfaces/pagination.interface';
 import { UsersService } from './users.service';
@@ -33,9 +27,9 @@ import { ModulePermissionsModel } from '../models/module-permissions.model';
 @Injectable()
 export class AdminsService {
   constructor(
-    @Inject(IUsersDatabaseRepositoryToken)
+    @Inject(IUsersDatabaseRepository)
     private readonly usersDatabaseRepository: IUsersDatabaseRepository,
-    @Inject(IAdminsDatabaseRepositoryToken)
+    @Inject(IAdminsDatabaseRepository)
     private readonly adminDatabaseRepository: IAdminsDatabaseRepository,
     private usersService: UsersService,
     private diskService: DiskService,

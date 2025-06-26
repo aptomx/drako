@@ -34,7 +34,7 @@
     "seed:undo": "npx sequelize-cli db:seed:undo",
     "seed:undo:one": "npx sequelize-cli db:seed:undo --seed",
     "seed:undo:all": "npx sequelize-cli db:seed:undo:all",
-    "prepare": "husky install",
+    "prepare": "husky",
     "docker:up": "docker-compose up -d",
     "docker:up:debug": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d",
     "docker:down": "docker-compose down",

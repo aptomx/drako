@@ -17,4 +17,4 @@ export interface IAuthDatabaseRepository {
   findRecoveryCodeById(id: number): Promise<IRecoveryCode>;
 }
 
-export const IAuthDatabaseRepositoryToken = Symbol('IAuthDatabaseRepository');
+export const IAuthDatabaseRepository = Symbol('IAuthDatabaseRepository');

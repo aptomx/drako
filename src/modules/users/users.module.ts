@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { UserEntity } from './infrastructure/entities/user.entity';
-import { IUsersDatabaseRepositoryToken } from './domain/repositories/users.interface';
+import { IUsersDatabaseRepository } from './domain/repositories/users.interface';
 import { DatabaseUsersRepository } from './infrastructure/repositories/users.repository';
-import { IAdminsDatabaseRepositoryToken } from './domain/repositories/admins.interface';
+import { IAdminsDatabaseRepository } from './domain/repositories/admins.interface';
 import { DatabaseAdminsRepository } from './infrastructure/repositories/admins.repository';
 import { MailModule } from 'src/lib/vendor/mail/mail.module';
 import { DiskModule } from 'src/lib/vendor/disk/disk.module';
@@ -34,11 +34,11 @@ import { ClientUsersController } from './infrastructure/controllers/client/clien
   ],
   providers: [
     {
-      provide: IUsersDatabaseRepositoryToken,
+      provide: IUsersDatabaseRepository,
       useClass: DatabaseUsersRepository,
     },
     {
-      provide: IAdminsDatabaseRepositoryToken,
+      provide: IAdminsDatabaseRepository,
       useClass: DatabaseAdminsRepository,
     },
     UsersService,

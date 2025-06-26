@@ -1,12 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../../users/domain/services/users.service';
 import { UserModel } from '../../../users/domain/models/user.model';
-import {
-  IAuthDatabaseRepository,
-  IAuthDatabaseRepositoryToken,
-} from '../repositories/auth.interface';
+import { IAuthDatabaseRepository } from '../repositories/auth.interface';
 import { MailService } from '../../../../lib/vendor/mail/mail.service';
 import { getRandomNumeric } from 'src/lib/utils/ramdom-string';
 import { RecoveryCodeModel } from '../models/recovery-code.model';
@@ -30,12 +27,14 @@ import { AuthNoPasswordResetRequestError } from '../../errors/auth-no-password-r
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-    @Inject(IAuthDatabaseRepositoryToken)
+    @Inject(IAuthDatabaseRepository)
     private readonly authDatabaseRepository: IAuthDatabaseRepository,
     @Inject(jwtConfig.KEY)
     private readonly config: ConfigType<typeof jwtConfig>,
@@ -77,7 +76,8 @@ export class AuthService {
   async checkTokenJWT(token: string): Promise<IVerifyToken> {
     try {
       return await this.jwtService.verify(token);
-    } catch {
+    } catch (error) {
+      this.logger.error('JWT token verification failed', error?.stack);
       throw new AuthInvalidTokenError('El token es inválido');
     }
   }

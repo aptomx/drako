@@ -63,7 +63,7 @@ module.exports = [
       ],
       'no-empty': ['error', { allowEmptyCatch: true }],
       'no-redeclare': 'off',
-      '@typescript-eslint/no-redeclare': 'error',
+      '@typescript-eslint/no-redeclare': 'off',
 
       // Prettier integration
       ...prettierConfig.rules,

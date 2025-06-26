@@ -11,4 +11,4 @@ export interface ITodoDatabaseRepository {
   delete(id: number): Promise<void>;
 }
 
-export const ITodoDatabaseRepositoryToken = Symbol('ITodoDatabaseRepository');
+export const ITodoDatabaseRepository = Symbol('ITodoDatabaseRepository');
