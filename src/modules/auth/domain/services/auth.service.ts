@@ -145,7 +145,8 @@ export class AuthService {
 
     try {
       await this.checkTokenJWT(exitingCode.token);
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para verificar la cuenta es inválido o ha expirado',
       );
@@ -180,7 +181,8 @@ export class AuthService {
 
     try {
       await this.checkTokenJWT(exitingCode.token);
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );
@@ -202,7 +204,8 @@ export class AuthService {
 
     try {
       await this.checkTokenJWT(exitingCode.token);
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );

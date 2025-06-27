@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import {
   S3Client,
@@ -22,6 +22,7 @@ import { DiskUnexpectedS3Error } from '../../errors/disk-unexpected-S3-error';
 
 @Injectable()
 export class S3FilesService implements IMethodsBase {
+  private readonly logger = new Logger(S3FilesService.name);
   constructor(
     @Inject(filesystemsConfig.KEY)
     private readonly fsConfig: ConfigType<typeof filesystemsConfig>,
@@ -70,7 +71,9 @@ export class S3FilesService implements IMethodsBase {
     });
     try {
       await this.s3.send(command);
-    } catch {}
+    } catch (error) {
+      this.logger.error(error);
+    }
     return { displayMessage: 'Archivo eliminado' };
   }
 

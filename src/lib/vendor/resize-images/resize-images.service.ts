@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -15,6 +15,7 @@ import { ResizeImageMeasurementsNotFoundError } from './errors/resize-image-meas
 
 @Injectable()
 export class ResizeImagesService {
+  private readonly logger = new Logger(ResizeImagesService.name);
   constructor(private readonly diskService: DiskService) {}
 
   private readonly sizes = {
@@ -49,7 +50,9 @@ export class ResizeImagesService {
   private async removeTemporaryFolder(pathTemporalFiles: string) {
     try {
       await remove.removeSync(pathTemporalFiles);
-    } catch {}
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   //Read folder temporary and upload files and original to disk config

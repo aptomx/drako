@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { LoginSocialNetworkCommand } from '../../infrastructure/commands/login-social-network.command';
@@ -28,6 +29,7 @@ import {
 
 @Injectable()
 export class SocialNetworkService {
+  private readonly logger = new Logger(SocialNetworkService.name);
   constructor(
     private httpService: HttpService,
     private usersService: UsersService,
@@ -83,7 +85,8 @@ export class SocialNetworkService {
       );
       info.data.provider = DriversSocialNetwork.Facebook;
       return info.data as IFacebook;
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(options.driver));
     }
   }
@@ -97,7 +100,8 @@ export class SocialNetworkService {
       );
       info.data.provider = DriversSocialNetwork.Google;
       return info.data as IGoogle;
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException(SOCIAL_NETWORK_TOKEN_ERROR(options.driver));
     }
   }
