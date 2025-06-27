@@ -44,7 +44,7 @@ export class LoggerService {
     try {
       await sequelize.models.auth_logs.create({ ...message });
     } catch (error) {
-      console.log(error);
+      this.logger.error('Failed to save auth log to database', error?.stack);
     }
   }
 }

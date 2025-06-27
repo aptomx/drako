@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import * as hbs from 'nodemailer-express-handlebars';
+import hbs from 'nodemailer-express-handlebars';
 import { join } from 'path';
 import * as aws from '@aws-sdk/client-ses';
 import {

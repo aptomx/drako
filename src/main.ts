@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { HttpFilterException } from './lib/filters/http-exception.filter';
 import * as exphbs from 'express-handlebars';
 import { join } from 'path';
@@ -12,6 +12,7 @@ import { LoggerService } from './lib/vendor/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const logger = new Logger('Bootstrap');
 
   //Catch global errors
   app.useGlobalFilters(new HttpFilterException(new LoggerService()));
@@ -60,8 +61,7 @@ async function bootstrap() {
 
   //Port listen
   const runningPort = process.env.PORT || AppModule.appPort;
-  await app.listen(runningPort, () => {
-    console.log(`[SERVER LISTENING AT PORT: ${runningPort}] `);
-  });
+  await app.listen(runningPort);
+  logger.log(`Server listening at port ${runningPort}`);
 }
 bootstrap();

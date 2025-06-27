@@ -166,9 +166,8 @@ export class AdminsService {
     const modulePermissionsModel = await Promise.all(
       await permissions.map(async (module) => {
         const moduleId = parseInt(module.moduleId);
-        const mod = await this.adminDatabaseRepository.findOneModulePermission(
-          moduleId,
-        );
+        const mod =
+          await this.adminDatabaseRepository.findOneModulePermission(moduleId);
         if (!mod) {
           throw new BadRequestException(
             `El módulo con ID ${moduleId} no se encontró`,

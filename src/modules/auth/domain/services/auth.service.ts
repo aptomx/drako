@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../../users/domain/services/users.service';
@@ -27,6 +27,8 @@ import { AuthNoPasswordResetRequestError } from '../../errors/auth-no-password-r
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -75,6 +77,7 @@ export class AuthService {
     try {
       return await this.jwtService.verify(token);
     } catch (error) {
+      this.logger.error('JWT token verification failed', error?.stack);
       throw new AuthInvalidTokenError('El token es inválido');
     }
   }
@@ -143,6 +146,7 @@ export class AuthService {
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para verificar la cuenta es inválido o ha expirado',
       );
@@ -178,6 +182,7 @@ export class AuthService {
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );
@@ -200,6 +205,7 @@ export class AuthService {
     try {
       await this.checkTokenJWT(exitingCode.token);
     } catch (error) {
+      this.logger.error(error);
       throw new AuthInvalidRecoveryCodeError(
         'El código para cambiar la contraseña es inválido o ha expirado',
       );

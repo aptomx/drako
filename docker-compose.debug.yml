@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      target: debug
+    ports:
+      - '3000:3000'
+      - '9229:9229'
+    environment:
+      NODE_ENV: development
+    command: ['sh', '-c', 'npm run migration:run && npm run start:debug']
