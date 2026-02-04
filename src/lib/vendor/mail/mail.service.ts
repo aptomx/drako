@@ -12,6 +12,7 @@ import { MailMissingDriverError } from './errors/mail-missing-driver-error';
 import { MailTemplateNotFoundError } from './errors/mail-template-not-found-error';
 import { LoggerReportingService } from '../loggerReporting/loggerReporting.service';
 import { MailError } from './errors/mail-error';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class MailService {
@@ -50,7 +51,7 @@ export class MailService {
     if (!getTemplateEmail) {
       throw new MailTemplateNotFoundError(ERROR_TEMPLATE_EMAIL);
     }
-
+    const refId = randomUUID();
     const context = { ...{ appUrl: this.apConfig.appUrl }, ...data };
     const parameters: any = {
       from: `${this.mlConfig.mailFromName} <${this.mlConfig.mailFromAddress}>`,
@@ -58,6 +59,9 @@ export class MailService {
       subject: subject,
       template: getTemplateEmail,
       context: context,
+      headers: {
+        'X-Entity-Ref-ID': refId,
+      },
     };
     if (bcc.length > 0) {
       parameters.bcc = bcc.join();
